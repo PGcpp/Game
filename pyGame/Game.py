@@ -3,9 +3,10 @@ from pygame.locals import *
 from sys import exit
 
 try:
-	from Warrior import *
+	from DefenseScene import *
+	from Buttom import *
 except ImportError:
-	print "\nUnable to import Warrior class\n"
+	print "\nUnable to import library class\n"
 	sys.exit(2)
 
 class Game():
@@ -13,8 +14,7 @@ class Game():
 	screenSize = (800, 600)
 	bufferMode = DOUBLEBUF
 	screen = None
-	
-	player = None
+	buttoms = []
 	endOfGame = False
 	
 	def __init__(self):
@@ -23,75 +23,62 @@ class Game():
 		icon = pygame.image.load("resources/icon.png")
 		pygame.display.set_icon(icon)
 		pygame.display.set_caption("Vikings Defense")
-		
 		self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
-		self.displayImage("resources/background.png", 0, 0)
-		
-		#warrior1 = Warrior(self.screen)
-		self.player = Warrior(self.screen, 200, 300)
-		
-		self.mainLoop()
+		self.drawBackground()
+		self.buttoms.append(Buttom(300, 100, "NEW_GAME"))
+		self.buttoms.append(Buttom(300, 250, "OPTIONS"))
+		self.buttoms.append(Buttom(300, 400, "EXIT"))
+
+
+		self.menuLoop()
 		self.game_exit()
-					
+	
+	def menu(self):
+		pass
 					
 	def gameExit(self):
 		self.endOfGame = True
-		print("game over")
+		print("exit")
 		exit()
 		
-	def mainLoop(self):		
+	def menuLoop(self):		
 		while not self.endOfGame:
 			for event in pygame.event.get():
-				self.mouseEvents(event)
-				if event.type == pygame.QUIT:
+				if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
+					self.endOfGame = True
 					self.gameExit()
+				self.mouseEvents(event)
+				self.drawMenu()
 			
 	def mouseEvents(self, event):
 		if event.type == pygame.MOUSEBUTTONUP:
-			print event.pos
-			x,y = event.pos
-		
-		keys = pygame.key.get_pressed()
+			for buttom in self.buttoms:
+				x, y = event.pos
+				if buttom.isHit(x, y):
+					if buttom.name == "NEW_GAME":
+						DefenseScene(self.screen)
+						self.drawBackground()
+					elif buttom.name == "OPTIONS":
+						print "options!"
+					elif buttom.name == "EXIT":
+						self.gameExit()
 
-		if keys[K_s]:
-			self.player.move(0,1)
+	def drawMenu(self):
+		for buttom in self.buttoms:
+			buttom.displayImage(self.screen)
 
-		if keys[K_w]:
-			self.player.move(0,-1)
-		
-		if keys[K_d]:
-			self.player.move(1,0)
-
-		if keys[K_a]:
-			self.player.move(-1,0)
-		
-		self.screen.fill((0,0,0))
-		self.displayImage("resources/background.png", 0, 0)
-		self.screen.blit(self.player.image, (self.player.xPos, self.player.yPos))
+	def drawBackground(self):
+		image = pygame.image.load("resources/background.png")
+		self.screen.blit(image, (0, 0))
 		pygame.display.flip()
-			
-		#xBoard, yBoard = self.computeBoardPosition(x,y)
-		#self.scaleDisplayImage("resources/cross.png", xBoard, yBoard, 120, 120)
-			
-	def computeBoardPosition(self, x, y):
-		if x < 250:
-			return 120, 180
-		elif x > 250 and x < 500:
-			return 255, 180
-		else:
-			return 380, 180
-			
-	def displayImage(self, sourcePath, x, y):
-			image = pygame.image.load(sourcePath)
-			self.screen.blit(image, (x, y))
-			pygame.display.flip()
-			
+
+
 	def scaleDisplayImage(self, sourcePath, xPos, yPos, xScale, yScale):
-			image = pygame.image.load(sourcePath)
-			imageScaled = pygame.transform.scale(image, (xScale, yScale))
-			self.screen.blit(imageScaled, (xPos, yPos))
-			pygame.display.flip()
-		
+		image = pygame.image.load(sourcePath)
+		imageScaled = pygame.transform.scale(image, (xScale, yScale))
+		self.screen.blit(imageScaled, (xPos, yPos))
+		pygame.display.flip()
+
 
 if __name__ == "__main__":
 	Game()
