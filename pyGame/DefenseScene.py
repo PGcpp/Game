@@ -40,6 +40,8 @@ class DefenseScene():
                 elif event.type==KEYDOWN and event.key==K_ESCAPE:
                     self.endOfLoop=True
                     self.clearMemory()
+                else:
+                    self.mouseEvents(event)
 
             self.screen.fill((0,0,0,0))
             for body in self.world.bodies:
@@ -57,14 +59,23 @@ class DefenseScene():
             dynamicBody : (127,127,127,255),
         }
 
-        #proby nadania ruchu obiektom
-        #vel = body.linearVelocity()
-        #vel.x = 5
-        #body.linearVelocity(vec2(50, 50))
-
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
         pygame.draw.polygon(self.screen, colors[body.type], vertices)
+
+    def mouseEvents(self, event):
+        if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    self.dynamic_body.ApplyLinearImpulse(vec2(0, 30), vec2(0, 0), True)
+                    #self.dynamic_body.ApplyLinearImpulse(vec2(0, 30), vec2(0, 0), True)
+                if event.key == pygame.K_s:
+                    self.dynamic_body.ApplyForce(vec2(0, -30), vec2(0, 0), True)
+                if event.key == pygame.K_a:
+                    #ver = self.dynamic_body.linearVelocity()
+                    #self.dynamic_body.linearVelocity(vec2(-5, 1))
+                    pass
+                if event.key == pygame.K_d:
+                    self.dynamic_body.ApplyForce(vec2(300, 0), vec2(0, 0), True)
 
     def clearMemory(self):
         for body in self.world.bodies:
