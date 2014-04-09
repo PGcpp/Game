@@ -4,6 +4,7 @@ from pygame.locals import *
 import Scene
 import Box2D
 from Box2D.b2 import *
+from Enum import *
 from sys import exit
 
 class DefenseScene(Scene.Scene):
@@ -22,10 +23,9 @@ class DefenseScene(Scene.Scene):
     clock = None
 
     def DefenseScene(screen):
-        super(screen)
         self.screen = screen
 
-    def prepare(self):
+    def prepare(self):        
         self.world=world(gravity=(0,-10),doSleep=True)
         self.ground=self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
         self.dynamic_body=self.world.CreateDynamicBody(position=(10,15), angle=15)
@@ -43,6 +43,11 @@ class DefenseScene(Scene.Scene):
         self.world.ClearForces()
         pygame.display.flip()
         self.clock.tick(self.TARGET_FPS)
+
+        for event in self.eventQueue:
+            if event.type==KEYDOWN and event.key==K_ESCAPE:
+                self.state = STATE.STOPPED
+                self.stop()
 
     def computeAndDraw(self, body, fixture):
         colors = {

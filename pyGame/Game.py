@@ -4,6 +4,7 @@ from Enum import *
 import sys
 
 try:
+        import IntroScene
         import DefenseScene
         import MenuScene
 except ImportError:
@@ -16,40 +17,62 @@ class Game():
         bufferMode = DOUBLEBUF
         screen = None
         endOfGame = False
+
+        menuScene = None
+        defenseScene = None
         
         def __init__(self):
                 pygame.init()
+                pygame.mixer.init()
                 
                 icon = pygame.image.load("resources/icon.png")
                 pygame.display.set_icon(icon)
                 pygame.display.set_caption("Vikings Defense")
                 self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
 
-                #w zasadzie wszystko ponizej bedzie w jednej zajebiscie wielkiej glownej petli gry
-
-                menuScene = MenuScene.MenuScene(self.screen)
-                defenseScene = DefenseScene.DefenseScene(self.screen)
-
-                menuScene.start()
-                while menuScene.state == STATE.RUNNING:
-                        pass
+                #wyswietlanie intra
+                introScene = IntroScene.IntroScene(self.screen)
+                introScene.start()
                 
-                if menuScene.state == MENU.PLAY:
-                        defenseScene.start()
-                        #i tu znow bedzie jakis while na tym defenseScene
-                        #i sprawdzanie state'a itp -> bo np chcemy wrocic do menu
-                        #albo zamknac gre :)
-                        #btw powrot do menu bd wymagal pomyslunku :)
-                        
-                elif menuScene.state == MENU.OPTIONS:
-                        print "tu beda opcje ale jeszcze nie ma wiec exit"
-                        self.Exit()
-                        #tu beda cuda i same piekne rzeczy
-                        
-                elif menuScene.state == STATE.EXIT:
-                        self.Exit()
-                        #a tu juz nic nie bedzie bo jest wszystko
+                while introScene.state == STATE.RUNNING:
+                        pass
 
+                if introScene.state == STATE.EXIT:
+                        self.Exit()
+
+                #jesli nie wylaczylismy w trakcie intra to gra idzie normalnie:
+                while True:
+
+                        self.menuScene = MenuScene.MenuScene(self.screen)
+                        self.defenseScene = DefenseScene.DefenseScene(self.screen)
+
+                        self.menuScene.start()
+                        while self.menuScene.state == STATE.RUNNING:
+                                pass
+      
+                        if self.menuScene.state == MENU.PLAY:
+                                self.defenseScene.start()
+
+                                while self.defenseScene.state == STATE.RUNNING:
+                                        pass
+
+                                if self.defenseScene.state == STATE.EXIT:
+                                        self.Exit()
+                                        break
+
+                                elif self.defenseScene.state == STATE.STOPPED:
+                                        continue
+                                        
+                        elif self.menuScene.state == MENU.OPTIONS:
+                                print "tu beda opcje ale jeszcze nie ma wiec exit"
+                                self.Exit()
+                                break
+                                #tu beda cuda i same piekne rzeczy
+                                        
+                        elif self.menuScene.state == STATE.EXIT:
+                                self.Exit()
+                                break
+                        
         def Exit(self):                
                 try:
                     pygame.quit()

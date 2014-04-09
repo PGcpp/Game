@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from Buttom import *
 from Enum import *
-
+import time
 import Scene
 import DefenseScene
 from sys import exit
@@ -10,26 +10,30 @@ from sys import exit
 class MenuScene(Scene.Scene):
 
     screen = None
-    buttoms = []
+    buttoms = [None, None, None]
     state = 0
+    menuSound = None
 
     def MenuScene(screen):
-        super(screen)
         self.screen = screen
         
 
     def prepare(self):
-        self.buttoms.append(Buttom(300, 100, "NEW_GAME"))
-        self.buttoms.append(Buttom(300, 250, "OPTIONS"))
-        self.buttoms.append(Buttom(300, 400, "EXIT"))
-
+        self.menuSound = pygame.mixer.Sound("resources/menu.wav")
+        self.menuSound.play(-1)
+        
         self.drawBackground()
+
+        self.buttoms[0] = Buttom(300, 100, "NEW_GAME")
+        self.buttoms[1] = Buttom(300, 250, "OPTIONS")
+        self.buttoms[2] = Buttom(300, 400, "EXIT")
+
+        for buttom in self.buttoms:
+            buttom.displayImage(self.screen)
 
     def step(self):
         for event in self.eventQueue:
             self.checkButton(event)
-        for buttom in self.buttoms:
-            buttom.displayImage(self.screen)
 
     def drawBackground(self):
         image = pygame.image.load("resources/background.png")
@@ -39,6 +43,8 @@ class MenuScene(Scene.Scene):
     def dispose(self):
         for buttom in self.buttoms:
             buttom.dispose()
+        self.buttoms = [None]
+        self.menuSound.stop()
 
     def checkButton(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
@@ -47,8 +53,8 @@ class MenuScene(Scene.Scene):
                 if buttom.isHit(x, y):
                     print buttom.name
                     if buttom.name == "NEW_GAME":
-                        self.state = MENU.PLAY
                         self.stop()
+                        self.state = MENU.PLAY
 
                     elif buttom.name == "OPTIONS":
                         self.state = MENU.OPTIONS
@@ -57,4 +63,5 @@ class MenuScene(Scene.Scene):
                     elif buttom.name == "EXIT":
                         self.state = STATE.EXIT
                         self.stop()
+        
 

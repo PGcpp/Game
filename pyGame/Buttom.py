@@ -34,10 +34,10 @@ class Buttom():
 
 	names = {
 	#generic buttom
-	"DEFAULT": "buttom.png",
+	"DEFAULT": "playButton.png",
 	#main menu
-	"NEW_GAME": "buttom.png",
-	"OPTIONS": "buttom.png",
-	"EXIT": "buttom.png"
+	"NEW_GAME": "playButton.png",
+	"OPTIONS": "settingsButton.png",
+	"EXIT": "exitButton.png"
 	#actual game buttoms
 	}

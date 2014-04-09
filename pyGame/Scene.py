@@ -25,9 +25,6 @@ class Scene():
         self.sceneLoop()
 
     def stop(self):
-        if self.state == STATE.RUNNING:
-            self.state = STATE.STOPPED
-            
         self.is_active = False
 
     def sceneLoop(self):
@@ -35,14 +32,14 @@ class Scene():
         self.prepare()
 
         while(self.is_active):
-            self.eventQueue = pygame.event.get()
             self.step()
+            self.eventQueue = pygame.event.get()
             self.handleExit()
 
         self.dispose()
 
     def prepare(self):
-        pass
+        print "PREPARE"
         #tu przygotowujemy sobie wszystko - to mozna zrobic tez w konstruktorze ale moze akurat taka logika okaze sie sensowna :)
 
     def step(self):
@@ -64,10 +61,4 @@ class Scene():
                 
                 self.onExit()
                 self.stop()
-                
-                try:
-                    pygame.quit()
-                    sys.exit()
-                    
-                except SystemExit:
-                    print 'Vikings Defense has stopped correctly.'
+                self.state = STATE.EXIT
