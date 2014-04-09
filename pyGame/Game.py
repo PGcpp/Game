@@ -12,51 +12,44 @@ except ImportError:
 
 class Game():
 
-        screenSize = (800, 600)
-        bufferMode = DOUBLEBUF
-        screen = None
-        endOfGame = False
-        
-        def __init__(self):
-                pygame.init()
+    screenSize = (800, 600)
+    bufferMode = DOUBLEBUF
+    screen = None
+    endOfGame = False
+    
+    def __init__(self):
+        pygame.init()
                 
-                icon = pygame.image.load("resources/icon.png")
-                pygame.display.set_icon(icon)
-                pygame.display.set_caption("Vikings Defense")
-                self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
+        icon = pygame.image.load("resources/icon.png")
+        pygame.display.set_icon(icon)
+        pygame.display.set_caption("Vikings Defense")
+        self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
 
-                #w zasadzie wszystko ponizej bedzie w jednej zajebiscie wielkiej glownej petli gry
+        menuScene = MenuScene.MenuScene(self.screen)
+        defenseScene = DefenseScene.DefenseScene(self.screen)
+        menuScene.start()
 
-                menuScene = MenuScene.MenuScene(self.screen)
-                defenseScene = DefenseScene.DefenseScene(self.screen)
-
+        while not self.endOfGame:
+                        
+            if menuScene.state == MENU.PLAY:
+                defenseScene.start()
                 menuScene.start()
-                while menuScene.state == STATE.RUNNING:
-                        pass
-                
-                if menuScene.state == MENU.PLAY:
-                        defenseScene.start()
-                        #i tu znow bedzie jakis while na tym defenseScene
-                        #i sprawdzanie state'a itp -> bo np chcemy wrocic do menu
-                        #albo zamknac gre :)
-                        #btw powrot do menu bd wymagal pomyslunku :)
-                        
-                elif menuScene.state == MENU.OPTIONS:
-                        print "tu beda opcje ale jeszcze nie ma wiec exit"
-                        self.Exit()
-                        #tu beda cuda i same piekne rzeczy
-                        
-                elif menuScene.state == STATE.EXIT:
-                        self.Exit()
-                        #a tu juz nic nie bedzie bo jest wszystko
+                     
+            elif menuScene.state == MENU.OPTIONS:
+                pass
+                                    
+            elif menuScene.state == STATE.EXIT:
+                self.Exit()
 
-        def Exit(self):                
-                try:
-                    pygame.quit()
-                    sys.exit()
-                except SystemExit:
-                    print 'Vikings Defense has stopped correctly.'
+    def Exit(self):                
+        try:
+            self.endOfGame = True
+            self.screen = None
+            pygame.quit()
+            sys.exit()
+        except SystemExit:
+            print 'Vikings Defense game has stopped correctly.'
 
 
 if __name__ == "__main__":
-        Game()
+    Game()

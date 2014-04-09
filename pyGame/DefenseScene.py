@@ -30,14 +30,18 @@ class DefenseScene(Scene.Scene):
         self.ground=self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
         self.dynamic_body=self.world.CreateDynamicBody(position=(10,15), angle=15)
         self.dynamic_body.CreatePolygonFixture(box=(2,1), density=1, friction=0.3)
-
         self.clock = pygame.time.Clock()
 
     def step(self):
         self.screen.fill((0,0,0,0))
+
         for body in self.world.bodies:
             for fixture in body.fixtures:
                 self.computeAndDraw(body, fixture)
+
+        for event in self.eventQueue:
+            self.back(event)
+            self.mouseEvents(event)
 
         self.world.Step(self.TIME_STEP, self.VELOCITY_ITERATIONS, self.POSITION_ITERATIONS)
         self.world.ClearForces()
@@ -50,31 +54,35 @@ class DefenseScene(Scene.Scene):
             dynamicBody : (127,127,127,255),
         }
 
-        #proby nadania ruchu obiektom
-        #vel = body.linearVelocity()
-        #vel.x = 5
-        #body.linearVelocity(vec2(50, 50))
-
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
         pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
-    def dispose(self):
+    def mouseEvents(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                self.dynamic_body.ApplyLinearImpulse(vec2(0, 30), vec2(0, 0), True)
+            if event.key == pygame.K_s:
+                self.dynamic_body.ApplyForce(vec2(0, -30), vec2(0, 0), True)
+            if event.key == pygame.K_a:
+                pass
+            if event.key == pygame.K_d:
+                self.dynamic_body.ApplyForce(vec2(3000, 10), self.dynamic_body.GetWorldPoint((0.0, 0.0)), True)
+
+    def back(self, event):
+        for event in self.eventQueue:
+            if event.type==KEYDOWN and event.key==K_ESCAPE:
+                self.isActive = False           
+
+    def clearMemory(self):
         for body in self.world.bodies:
             self.world.DestroyBody(body)
         for joint in self.world.joints:
             self.world.DestroyJoint(joint)
 
+    def dispose(self):
+        self.clearMemory()
 
-
-
-
-
-##            while not self.endOfLoop:
-##            for event in pygame.event.get():
-##                if event.type==QUIT:
-##                    self.gameExit()
-##                elif event.type==KEYDOWN and event.key==K_ESCAPE:
-##                    self.endOfLoop=True
-##                    self.clearMemory()
-
+    def onExit(self):
+        self.clearMemory()
+        super(DefenseScene, self).onExit()

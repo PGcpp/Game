@@ -12,6 +12,7 @@ class MenuScene(Scene.Scene):
     screen = None
     buttoms = []
     state = 0
+    image = None
 
     def MenuScene(screen):
         super(screen)
@@ -19,9 +20,10 @@ class MenuScene(Scene.Scene):
         
 
     def prepare(self):
-        self.buttoms.append(Buttom(300, 100, "NEW_GAME"))
-        self.buttoms.append(Buttom(300, 250, "OPTIONS"))
-        self.buttoms.append(Buttom(300, 400, "EXIT"))
+        self.image = pygame.image.load("resources/background.png")
+        self.buttoms.append(Buttom(300, 100, "MENU.PLAY"))
+        self.buttoms.append(Buttom(300, 250, "MENU.OPTIONS"))
+        self.buttoms.append(Buttom(300, 400, "STATE.EXIT"))
 
         self.drawBackground()
 
@@ -32,8 +34,7 @@ class MenuScene(Scene.Scene):
             buttom.displayImage(self.screen)
 
     def drawBackground(self):
-        image = pygame.image.load("resources/background.png")
-        self.screen.blit(image, (0, 0))
+        self.screen.blit(self.image, (0, 0))
         pygame.display.flip()
 
     def dispose(self):
@@ -46,15 +47,14 @@ class MenuScene(Scene.Scene):
                 x, y = event.pos
                 if buttom.isHit(x, y):
                     print buttom.name
-                    if buttom.name == "NEW_GAME":
+                    if buttom.name == "MENU.PLAY":
                         self.state = MENU.PLAY
                         self.stop()
 
-                    elif buttom.name == "OPTIONS":
+                    elif buttom.name == "MENU.OPTIONS":
                         self.state = MENU.OPTIONS
-                        self.stop()
 
-                    elif buttom.name == "EXIT":
+                    elif buttom.name == "STATE.EXIT":
                         self.state = STATE.EXIT
                         self.stop()
 
