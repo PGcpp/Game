@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from Buttom import *
+from Button import *
 from Enum import *
 import time
 import Scene
@@ -10,7 +10,7 @@ from sys import exit
 class MenuScene(Scene.Scene):
 
     screen = None
-    buttoms = [None, None, None]
+    buttons = [None, None, None]
     state = 0
     menuSound = None
 
@@ -19,49 +19,44 @@ class MenuScene(Scene.Scene):
         
 
     def prepare(self):
-        self.menuSound = pygame.mixer.Sound("resources/menu.wav")
-        self.menuSound.play(-1)
         
         self.drawBackground()
 
-        self.buttoms[0] = Buttom(300, 100, "NEW_GAME")
-        self.buttoms[1] = Buttom(300, 250, "OPTIONS")
-        self.buttoms[2] = Buttom(300, 400, "EXIT")
+        self.buttons[0] = Button(500, 160, "NEW_GAME")
+        self.buttons[1] = Button(500, 260, "OPTIONS")
+        self.buttons[2] = Button(500, 360, "EXIT")
 
-        for buttom in self.buttoms:
-            buttom.displayImage(self.screen)
+        for button in self.buttons:
+            button.displayImage(self.screen)
 
     def step(self):
         for event in self.eventQueue:
             self.checkButton(event)
 
     def drawBackground(self):
-        image = pygame.image.load("resources/background.png")
+        image = pygame.image.load("resources/menuBackground.png")
         self.screen.blit(image, (0, 0))
         pygame.display.flip()
 
     def dispose(self):
-        for buttom in self.buttoms:
-            buttom.dispose()
-        self.buttoms = [None]
-        self.menuSound.stop()
+        for button in self.buttons:
+            button.dispose()
+        self.buttons = [None]
 
     def checkButton(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
-            for buttom in self.buttoms:
+            for button in self.buttons:
                 x, y = event.pos
-                if buttom.isHit(x, y):
-                    print buttom.name
-                    if buttom.name == "NEW_GAME":
+                if button.isHit(x, y):
+                    print button.name
+                    if button.name == "NEW_GAME":
                         self.stop()
                         self.state = MENU.PLAY
 
-                    elif buttom.name == "OPTIONS":
+                    elif button.name == "OPTIONS":
                         self.state = MENU.OPTIONS
                         self.stop()
 
-                    elif buttom.name == "EXIT":
+                    elif button.name == "EXIT":
                         self.state = STATE.EXIT
                         self.stop()
-        
-

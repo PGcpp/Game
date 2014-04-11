@@ -15,3 +15,24 @@ class STATE:
 class MENU:
     PLAY = 101
     OPTIONS = 102
+
+class PARAMS:
+    IMAGEPATH = "resources/"
+
+class BUTTONS:
+    names = {
+	#generic buttom
+	"DEFAULT": "playButton.png",
+	#main menu
+	"NEW_GAME": "playButton.png",
+	"OPTIONS": "settingsButton.png",
+	"EXIT": "exitButton.png",
+	#submenu
+        "MUSICMINUS": "settingsMinusButton.png",
+        "MUSICPLUS": "settingsPlusButton.png",
+        "FXMINUS": "settingsMinusButton.png",
+        "FXPLUS": "settingsPlusButton.png",
+        "LEVELEASY": "levelEasyButton.png",
+        "LEVELMEDIUM": "levelMediumButton.png",
+        "LEVELHARD": "levelHardButton.png"
+	}

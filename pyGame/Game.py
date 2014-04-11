@@ -7,6 +7,7 @@ try:
         import IntroScene
         import DefenseScene
         import MenuScene
+        import SettingsScene
 except ImportError:
         print "\nUnable to import library class\n"
         sys.exit(2)
@@ -19,7 +20,10 @@ class Game():
         endOfGame = False
 
         menuScene = None
+        settingsScene = None
         defenseScene = None
+
+        menuSound = None
         
         def __init__(self):
                 pygame.init()
@@ -31,19 +35,24 @@ class Game():
                 self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
 
                 #wyswietlanie intra
-                introScene = IntroScene.IntroScene(self.screen)
-                introScene.start()
+                #introScene = IntroScene.IntroScene(self.screen)
+                #introScene.start()
                 
-                while introScene.state == STATE.RUNNING:
-                        pass
+                #while introScene.state == STATE.RUNNING:
+                #        pass
 
-                if introScene.state == STATE.EXIT:
-                        self.Exit()
+                #if introScene.state == STATE.EXIT:
+                #        self.Exit()
 
                 #jesli nie wylaczylismy w trakcie intra to gra idzie normalnie:
                 while True:
 
+                        self.menuSound = pygame.mixer.Sound("resources/menu.wav")
+                        self.menuSound.play(-1)
+                        
                         self.menuScene = MenuScene.MenuScene(self.screen)
+                        self.settingsScene = SettingsScene.SettingsScene(self.screen)
+                        self.settingsScene.setSound(self.menuSound)
                         self.defenseScene = DefenseScene.DefenseScene(self.screen)
 
                         self.menuScene.start()
@@ -51,6 +60,7 @@ class Game():
                                 pass
       
                         if self.menuScene.state == MENU.PLAY:
+                                self.menuSound.stop()
                                 self.defenseScene.start()
 
                                 while self.defenseScene.state == STATE.RUNNING:
@@ -64,10 +74,18 @@ class Game():
                                         continue
                                         
                         elif self.menuScene.state == MENU.OPTIONS:
-                                print "tu beda opcje ale jeszcze nie ma wiec exit"
-                                self.Exit()
-                                break
-                                #tu beda cuda i same piekne rzeczy
+                                self.settingsScene.start()
+
+                                while self.settingsScene.state == STATE.RUNNING:
+                                        pass
+
+                                if self.settingsScene.state == STATE.EXIT:
+                                        self.menuSound.stop()
+                                        self.Exit()
+                                        break
+
+                                elif self.settingsScene.state == STATE.STOPPED:
+                                        continue
                                         
                         elif self.menuScene.state == STATE.EXIT:
                                 self.Exit()
