@@ -36,5 +36,8 @@ class BUTTONS:
         "DIFFICULTYMEDIUM": "difficultyMediumButton.png",
         "DIFFICULTYHARD": "difficultyHardButton.png",
         "EXITSETTINGS": "exitSettingsButton.png",
-        "SAVESETTINGS": "saveSettingsButton.png"
+        "SAVESETTINGS": "saveSettingsButton.png",
+        #ingame menu
+        "RESUMEGAME": "resumeGameButton.png",
+        "QUITGAME": "quitGameButton.png"
 	}

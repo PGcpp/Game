@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from Button import *
 
 import Scene
 import Box2D
@@ -25,7 +26,8 @@ class DefenseScene(Scene.Scene):
     def DefenseScene(screen):
         self.screen = screen
 
-    def prepare(self):        
+    def prepare(self):
+        pass
         self.world=world(gravity=(0,-10),doSleep=True)
         self.ground=self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
         self.dynamic_body=self.world.CreateDynamicBody(position=(10,15), angle=15)
@@ -46,8 +48,7 @@ class DefenseScene(Scene.Scene):
 
         for event in self.eventQueue:
             if event.type==KEYDOWN and event.key==K_ESCAPE:
-                self.state = STATE.STOPPED
-                self.stop()
+                self.inGameMenuLoop()                
 
     def computeAndDraw(self, body, fixture):
         colors = {
@@ -70,16 +71,45 @@ class DefenseScene(Scene.Scene):
         for joint in self.world.joints:
             self.world.DestroyJoint(joint)
 
+    def inGameMenuLoop(self):
+        inGameMenuActive = True
 
+        inGameMenuBackground = pygame.image.load("resources/inGameMenuBackground.png")
+        self.screen.blit(inGameMenuBackground, (225, 100))
+        pygame.display.flip()
 
+        buttons = [None, None]
+        buttons[0] = Button(315, 235, "RESUMEGAME")
+        buttons[1] = Button(315, 310, "QUITGAME")
 
+        for button in buttons:
+            button.displayImage(self.screen)
+        
+        while inGameMenuActive:
 
+            #i od teraz WSZYSTKIM musimy sie zajac w obrebie
+            #ponizszego while'a - przejelismy na siebie caly przeplyw programu
+            eventQueue = pygame.event.get()
+            for event in eventQueue:
+                
+                if event.type == pygame.QUIT:
+                    inGameMenuActive = False
+                    self.onExit()
+                    self.state = STATE.EXIT
+                    self.stop()
+                    
+                if event.type == pygame.MOUSEBUTTONUP:
+                    for button in buttons:
+                        x, y = event.pos
+                        if button.isHit(x, y):
 
-##            while not self.endOfLoop:
-##            for event in pygame.event.get():
-##                if event.type==QUIT:
-##                    self.gameExit()
-##                elif event.type==KEYDOWN and event.key==K_ESCAPE:
-##                    self.endOfLoop=True
-##                    self.clearMemory()
+                            print button.name
+                
+                            if button.name == "RESUMEGAME":
+                                inGameMenuActive = False
+                            
+                            if button.name == "QUITGAME":
+                                inGameMenuActive = False
+                                self.state = STATE.STOPPED
+                                self.stop()
 
