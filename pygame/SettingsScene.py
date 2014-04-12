@@ -11,10 +11,14 @@ from sys import exit
 class SettingsScene(Scene.Scene):
 
     screen = None
-    buttons = [None, None, None, None]
+    buttons = [None, None, None, None, None, None, None, None, None]
     state = 0
     menuSound = None
     settings = None
+
+    musicLevel = 0
+    effectsLevel = 0
+    difficulty = 1
 
     def SettingsScene(screen):
         self.screen = screen
@@ -28,29 +32,56 @@ class SettingsScene(Scene.Scene):
     def prepare(self):
         
         self.drawBackground()
-
         self.buttons[0] = Button(525, 220, "MUSICMINUS")
         self.buttons[1] = Button(725, 220, "MUSICPLUS")
-        self.buttons[2] = Button(525, 300, "FXMINUS")
-        self.buttons[3] = Button(725, 300, "FXPLUS")
+        self.buttons[2] = Button(525, 320, "FXMINUS")
+        self.buttons[3] = Button(725, 320, "FXPLUS")
+        self.buttons[4] = Button(487, 420, "DIFFICULTYEASY")
+        self.buttons[5] = Button(580, 420, "DIFFICULTYMEDIUM")
+        self.buttons[6] = Button(697, 420, "DIFFICULTYHARD")
+        self.buttons[7] = Button(475, 525, "EXITSETTINGS")
+        self.buttons[8] = Button(625,525, "SAVESETTINGS")
 
         for button in self.buttons:
             button.displayImage(self.screen)
 
         self.settings = ConfigParser.ConfigParser()
+        self.settings.readfp(open('settings.cfg'))
+        self.musicLevel = int(self.settings.get("MUSIC", "LEVEL"))
+        self.effectsLevel = int(self.settings.get("EFFECTS", "LEVEL"))
+        self.difficulty = int(self.settings.get("DIFFICULTY", "LEVEL"))
 
-    def readAndPrintSettings(self):
+        #workarround zeby sie bylo bugow na wypadek recznego ustawienia w pliku wartosci mniejszej/wiekszej od 0/5
+        if self.musicLevel < 0:
+            self.musicLevel = 0
+        elif self.musicLevel > 5:
+            self.musicLevel = 5
+        elif self.effectsLevel < 0:
+            self.effectsLevel = 0
+        elif self.effectsLevel > 5:
+            self.effectsLevel = 5
+        elif self.difficulty < 1:
+            self.difficulty = 1
+        elif self.difficulty > 3:
+            self.difficulty = 3
+        #koniec workarround
+
+        self.PrintSettings()
+
+    def PrintSettings(self):
         #ta funkcja domyslnie bedzie podmieniala sprite'y
         #przy opcjach, ktore beda reprezentowaly skale
         #i aktualna wartosc [np 5 toporow - taki poziom glosnosci
         #ile z nich zakolorowanych na zielono]
-        self.settings.read(['settings.cfg'])
-        print "------------------------------"
-        print self.settings.get("MUSIC", "PLAY")
-        print self.settings.get("MUSIC", "LEVEL")
-        print self.settings.get("EFFECTS", "PLAY")
-        print self.settings.get("EFFECTS", "LEVEL")
-        print "------------------------------"
+        musicLevelImage = pygame.image.load("resources/value"+str(self.musicLevel)+".png")
+        effectsLevelImage = pygame.image.load("resources/value"+str(self.effectsLevel)+".png")
+        difficultyImage = pygame.image.load("resources/difficulty"+str(self.difficulty)+".png")
+	self.screen.blit(musicLevelImage, (562, 195))
+        self.screen.blit(effectsLevelImage, (562, 295))
+        self.screen.blit(difficultyImage, (480, 420))
+        pygame.display.flip()
+        
+        self.menuSound.set_volume( self.musicLevel * 0.2 )
 
     def step(self):
         for event in self.eventQueue:
@@ -65,7 +96,6 @@ class SettingsScene(Scene.Scene):
         for button in self.buttons:
             button.dispose()
         self.buttons = [None]
-        self.menuSound.stop()
 
     def checkButton(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
@@ -75,35 +105,62 @@ class SettingsScene(Scene.Scene):
                     
                     print button.name
 
-                    section = None
-                    value = None
-
-                    self.settings.readfp( open('settings.cfg', 'r') )
-                    musicLevel = int(self.settings.get("MUSIC", "LEVEL"))
-                    effectsLevel = int(self.settings.get("EFFECTS", "LEVEL"))
-
                     if button.name == "MUSICMINUS":
-                        section = "MUSIC"
-                        value = musicLevel - 1
+                        if self.musicLevel <= 0:
+                            self.musicLevel = 0
+                        else:
+                            self.musicLevel = self.musicLevel - 1
+                        self.PrintSettings()
 
                     if button.name == "MUSICPLUS":
-                        section = "MUSIC"
-                        value = musicLevel + 1
+                        if self.musicLevel >= 5:
+                            self.musicLevel = 5
+                        else:
+                            self.musicLevel = self.musicLevel + 1
+                        self.PrintSettings()
 
                     if button.name == "FXMINUS":
-                        section = "EFFECTS"
-                        value = effectsLevel - 1
+                        if self.effectsLevel <= 0:
+                            self.effectsLevel = 0
+                        else :
+                            self.effectsLevel = self.effectsLevel - 1
+                        self.PrintSettings()
 
                     if button.name == "FXPLUS":
-                        section = "EFFECTS"
-                        value = effectsLevel + 1
-                        
-                    self.settings.set(section, "LEVEL", value)
-                    
-                    with open('settings.cfg', 'wb') as configfile:
-                        self.settings.write(configfile)
+                        if self.effectsLevel >= 5:
+                            self.effectsLevel = 5
+                        else :
+                            self.effectsLevel = self.effectsLevel + 1
+                        self.PrintSettings()
 
-                    self.readAndPrintSettings()
+                    if button.name == "DIFFICULTYEASY":
+                        self.difficulty = 1
+                        self.PrintSettings()
+
+                    if button.name == "DIFFICULTYMEDIUM":
+                        self.difficulty = 2
+                        self.PrintSettings()
+
+                    if button.name == "DIFFICULTYHARD":
+                        self.difficulty = 3
+                        self.PrintSettings()
+                        
+                    if button.name == "EXITSETTINGS":
+                        self.state = STATE.STOPPED
+                        self.stop()
+
+                    if button.name == "SAVESETTINGS":
+                        self.saveSettings()
+                    
+
+    def saveSettings(self):
+        self.settings.set("MUSIC", "LEVEL", self.musicLevel)
+        self.settings.set("EFFECTS", "LEVEL", self.effectsLevel)
+        self.settings.set("DIFFICULTY", "LEVEL", self.difficulty)
+        
+        settingsFile = open('settings.cfg' , 'w')
+        self.settings.write(settingsFile)
+        settingsFile.close()
 
     #zeby sie nie popsulo przy wylaczaniu krzyzykiem
     def onExit(self):

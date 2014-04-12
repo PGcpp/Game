@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 from Enum import *
 
+import Settings
 import Scene
 import time
 import math
@@ -27,6 +28,7 @@ class IntroScene(Scene.Scene):
         self.introImage.set_alpha(0)
 
         introSound = pygame.mixer.Sound("resources/intro.wav")
+        introSound.set_volume( Settings.getMusicLevel() )
         introSound.play()
 
     def step(self):

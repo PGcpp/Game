@@ -8,6 +8,7 @@ try:
         import DefenseScene
         import MenuScene
         import SettingsScene
+        import Settings
 except ImportError:
         print "\nUnable to import library class\n"
         sys.exit(2)
@@ -24,6 +25,7 @@ class Game():
         defenseScene = None
 
         menuSound = None
+        startMenuSound = True
         
         def __init__(self):
                 pygame.init()
@@ -34,21 +36,24 @@ class Game():
                 pygame.display.set_caption("Vikings Defense")
                 self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
 
-                #wyswietlanie intra
-                #introScene = IntroScene.IntroScene(self.screen)
-                #introScene.start()
+                self.menuSound = pygame.mixer.Sound("resources/menu.wav")
                 
-                #while introScene.state == STATE.RUNNING:
-                #        pass
+                #wyswietlanie intra
+                introScene = IntroScene.IntroScene(self.screen)
+                introScene.start()
+                
+                while introScene.state == STATE.RUNNING:
+                        pass
 
-                #if introScene.state == STATE.EXIT:
-                #        self.Exit()
+                if introScene.state == STATE.EXIT:
+                        self.Exit()
 
                 #jesli nie wylaczylismy w trakcie intra to gra idzie normalnie:
                 while True:
 
-                        self.menuSound = pygame.mixer.Sound("resources/menu.wav")
-                        self.menuSound.play(-1)
+                        self.menuSound.set_volume( Settings.getMusicLevel() )
+                        if self.startMenuSound:
+                                self.menuSound.play(-1)
                         
                         self.menuScene = MenuScene.MenuScene(self.screen)
                         self.settingsScene = SettingsScene.SettingsScene(self.screen)
@@ -71,6 +76,7 @@ class Game():
                                         break
 
                                 elif self.defenseScene.state == STATE.STOPPED:
+                                        self.startMenuSound = True
                                         continue
                                         
                         elif self.menuScene.state == MENU.OPTIONS:
@@ -85,6 +91,8 @@ class Game():
                                         break
 
                                 elif self.settingsScene.state == STATE.STOPPED:
+                                        self.menuSound.set_volume( Settings.getMusicLevel() )
+                                        self.startMenuSound = False
                                         continue
                                         
                         elif self.menuScene.state == STATE.EXIT:

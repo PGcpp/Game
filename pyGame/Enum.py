@@ -32,7 +32,9 @@ class BUTTONS:
         "MUSICPLUS": "settingsPlusButton.png",
         "FXMINUS": "settingsMinusButton.png",
         "FXPLUS": "settingsPlusButton.png",
-        "LEVELEASY": "levelEasyButton.png",
-        "LEVELMEDIUM": "levelMediumButton.png",
-        "LEVELHARD": "levelHardButton.png"
+        "DIFFICULTYEASY": "difficultyEasyButton.png",
+        "DIFFICULTYMEDIUM": "difficultyMediumButton.png",
+        "DIFFICULTYHARD": "difficultyHardButton.png",
+        "EXITSETTINGS": "exitSettingsButton.png",
+        "SAVESETTINGS": "saveSettingsButton.png"
 	}
