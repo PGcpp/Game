@@ -1,6 +1,10 @@
 import pygame
 from pygame.locals import *
 from Button import *
+import Viking
+from Viking import *
+import CollisionListener
+from CollisionListener import *
 
 import Scene
 import Box2D
@@ -9,35 +13,37 @@ from Enum import *
 from sys import exit
 
 class DefenseScene(Scene.Scene):
-
+    
     PPM=20.0
-    TARGET_FPS=60
+    TARGET_FPS=45
     TIME_STEP=1.0/TARGET_FPS
     VELOCITY_ITERATIONS=10
     POSITION_ITERATIONS=10
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT=600
 
-    ground = None
-    dynamic_body = None
     world = None
+    ground = None
+    count = 0
+
     clock = None
 
     def DefenseScene(screen):
         self.screen = screen
 
     def prepare(self):
-        pass
-        self.world=world(gravity=(0,-10),doSleep=True)
-        self.ground=self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
-        self.dynamic_body=self.world.CreateDynamicBody(position=(10,15), angle=15)
-        self.dynamic_body.CreatePolygonFixture(box=(2,1), density=1, friction=0.3)
+        self.world = world(gravity=(0,-10), doSleep=True, contactListener=CollisionListener())
+        self.ground = self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
+
+        #self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
+        #self.box.CreatePolygonFixture(box=(1,1), density=1, friction=0.3)
 
         self.clock = pygame.time.Clock()
 
     def step(self):
         self.screen.fill((0,0,0,0))
         for body in self.world.bodies:
+            self.clearViking(body)
             for fixture in body.fixtures:
                 self.computeAndDraw(body, fixture)
 
@@ -46,9 +52,32 @@ class DefenseScene(Scene.Scene):
         pygame.display.flip()
         self.clock.tick(self.TARGET_FPS)
 
+        self.count += 1
+        if self.count > self.TARGET_FPS * 5:
+            self.count = 0
+            self.deployVikings()
+
         for event in self.eventQueue:
             if event.type==KEYDOWN and event.key==K_ESCAPE:
-                self.inGameMenuLoop()                
+                self.inGameMenuLoop()
+
+    def deployVikings(self):
+        Viking(self.world, -2, 5)
+
+    def clearViking(self, body):
+        if body.position[0] > 45:
+            self.world.DestroyBody(body)
+
+    def mouseEvents(self, event):
+        if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    self.viking.body.ApplyForce(vec2(0, 300), self.viking.body.GetWorldPoint((0, 0)), True)
+                if event.key == pygame.K_s:
+                    self.viking.body.ApplyForce(vec2(0, -300), self.viking.body.GetWorldPoint((0, 0)), True)
+                if event.key == pygame.K_a:
+                    self.viking.body.linearVelocity = vec2(-5, 0)
+                if event.key == pygame.K_d:
+                    self.viking.body.linearVelocity = vec2(5, 0)
 
     def computeAndDraw(self, body, fixture):
         colors = {
@@ -56,20 +85,23 @@ class DefenseScene(Scene.Scene):
             dynamicBody : (127,127,127,255),
         }
 
-        #proby nadania ruchu obiektom
-        #vel = body.linearVelocity()
-        #vel.x = 5
-        #body.linearVelocity(vec2(50, 50))
-
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
-        pygame.draw.polygon(self.screen, colors[body.type], vertices)
+        if body.userData != None:
+            if body.userData[0] == "viking":
+                self.displayImage(body.userData[1], vertices[0][0], vertices[2][1])
+        else:
+            pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
     def dispose(self):
         for body in self.world.bodies:
             self.world.DestroyBody(body)
         for joint in self.world.joints:
             self.world.DestroyJoint(joint)
+
+    def displayImage(self, image, xPos, yPos):
+        self.screen.blit(image, (xPos, yPos))
+        pygame.display.flip()
 
     def inGameMenuLoop(self):
         inGameMenuActive = True
@@ -86,9 +118,6 @@ class DefenseScene(Scene.Scene):
             button.displayImage(self.screen)
         
         while inGameMenuActive:
-
-            #i od teraz WSZYSTKIM musimy sie zajac w obrebie
-            #ponizszego while'a - przejelismy na siebie caly przeplyw programu
             eventQueue = pygame.event.get()
             for event in eventQueue:
                 

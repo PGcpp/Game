@@ -2,10 +2,10 @@ import pygame
 from Enum import *
 
 class Button():
-
-        width = None
-        height = None
-        image = None
+	
+	width = None
+	height = None
+	image = None
 	xPos = 0
 	yPos = 0
 	name = ""

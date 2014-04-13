@@ -23,8 +23,6 @@ class SettingsScene(Scene.Scene):
     def SettingsScene(screen):
         self.screen = screen
 
-    #nie jest to zbyt ladne ale to wyjatkowa sytuacja - nigdzie indziej w grze nie bedziemy 'podtrzymywac' dzwieku z poprzedniej
-    #sceny wiec mozna sobie pozwolic na taki workarround :) //patrz nizej onExit()
     def setSound(self, menuSound):
         self.menuSound = menuSound
         
@@ -51,7 +49,6 @@ class SettingsScene(Scene.Scene):
         self.effectsLevel = int(self.settings.get("EFFECTS", "LEVEL"))
         self.difficulty = int(self.settings.get("DIFFICULTY", "LEVEL"))
 
-        #workarround zeby sie bylo bugow na wypadek recznego ustawienia w pliku wartosci mniejszej/wiekszej od 0/5
         if self.musicLevel < 0:
             self.musicLevel = 0
         elif self.musicLevel > 5:
@@ -64,19 +61,14 @@ class SettingsScene(Scene.Scene):
             self.difficulty = 1
         elif self.difficulty > 3:
             self.difficulty = 3
-        #koniec workarround
 
         self.PrintSettings()
 
     def PrintSettings(self):
-        #ta funkcja domyslnie bedzie podmieniala sprite'y
-        #przy opcjach, ktore beda reprezentowaly skale
-        #i aktualna wartosc [np 5 toporow - taki poziom glosnosci
-        #ile z nich zakolorowanych na zielono]
         musicLevelImage = pygame.image.load("resources/value"+str(self.musicLevel)+".png")
         effectsLevelImage = pygame.image.load("resources/value"+str(self.effectsLevel)+".png")
         difficultyImage = pygame.image.load("resources/difficulty"+str(self.difficulty)+".png")
-	self.screen.blit(musicLevelImage, (562, 195))
+        self.screen.blit(musicLevelImage, (562, 195))
         self.screen.blit(effectsLevelImage, (562, 295))
         self.screen.blit(difficultyImage, (480, 420))
         pygame.display.flip()
@@ -162,7 +154,6 @@ class SettingsScene(Scene.Scene):
         self.settings.write(settingsFile)
         settingsFile.close()
 
-    #zeby sie nie popsulo przy wylaczaniu krzyzykiem
     def onExit(self):
         self.menuSound.stop()
         

@@ -15,10 +15,9 @@ except ImportError:
 
 class Game():
 
-        screenSize = (800, 600)
-        bufferMode = DOUBLEBUF #FULLSCREEN
+        SCREEN_SIZE = (800, 600)
+        BUFFER_MODE = DOUBLEBUF
         screen = None
-        endOfGame = False
 
         menuScene = None
         settingsScene = None
@@ -34,11 +33,10 @@ class Game():
                 icon = pygame.image.load("resources/icon.png")
                 pygame.display.set_icon(icon)
                 pygame.display.set_caption("Vikings Defense")
-                self.screen = pygame.display.set_mode(self.screenSize, self.bufferMode)
+                self.screen = pygame.display.set_mode(self.SCREEN_SIZE, self.BUFFER_MODE)
 
                 self.menuSound = pygame.mixer.Sound("resources/menu.wav")
                 
-                #wyswietlanie intra
                 introScene = IntroScene.IntroScene(self.screen)
                 introScene.start()
                 
@@ -48,7 +46,6 @@ class Game():
                 if introScene.state == STATE.EXIT:
                         self.Exit()
 
-                #jesli nie wylaczylismy w trakcie intra to gra idzie normalnie:
                 while True:
 
                         self.menuSound.set_volume( Settings.getMusicLevel() )
@@ -98,7 +95,7 @@ class Game():
                         elif self.menuScene.state == STATE.EXIT:
                                 self.Exit()
                                 break
-                        
+
         def Exit(self):                
                 try:
                     pygame.quit()
