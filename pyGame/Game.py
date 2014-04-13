@@ -16,7 +16,7 @@ except ImportError:
 class Game():
 
         screenSize = (800, 600)
-        bufferMode = DOUBLEBUF
+        bufferMode = DOUBLEBUF #FULLSCREEN
         screen = None
         endOfGame = False
 
@@ -39,14 +39,14 @@ class Game():
                 self.menuSound = pygame.mixer.Sound("resources/menu.wav")
                 
                 #wyswietlanie intra
-                #introScene = IntroScene.IntroScene(self.screen)
-                #introScene.start()
+                introScene = IntroScene.IntroScene(self.screen)
+                introScene.start()
                 
-                #while introScene.state == STATE.RUNNING:
-                #        pass
+                while introScene.state == STATE.RUNNING:
+                        pass
 
-                #if introScene.state == STATE.EXIT:
-                #        self.Exit()
+                if introScene.state == STATE.EXIT:
+                        self.Exit()
 
                 #jesli nie wylaczylismy w trakcie intra to gra idzie normalnie:
                 while True:
