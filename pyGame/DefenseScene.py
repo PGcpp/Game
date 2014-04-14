@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
 from Button import *
-import Viking
-from Viking import *
+import VikingFactory
+from VikingFactory import *
 import CollisionListener
 from CollisionListener import *
 
@@ -35,8 +35,9 @@ class DefenseScene(Scene.Scene):
         self.world = world(gravity=(0,-10), doSleep=True, contactListener=CollisionListener())
         self.ground = self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
 
-        #self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
-        #self.box.CreatePolygonFixture(box=(1,1), density=1, friction=0.3)
+        self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
+        self.box.CreatePolygonFixture(box=(1,1), density=1, friction=0.3)
+        self.box.userData = ["arrow"]
 
         self.clock = pygame.time.Clock()
 
@@ -62,7 +63,7 @@ class DefenseScene(Scene.Scene):
                 self.inGameMenuLoop()
 
     def deployVikings(self):
-        Viking(self.world, -2, 5)
+        VikingFactory(self.world, -2, 5)
 
     def clearViking(self, body):
         if body.position[0] > 45:
@@ -87,9 +88,8 @@ class DefenseScene(Scene.Scene):
 
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
-        if body.userData != None:
-            if body.userData[0] == "viking":
-                self.displayImage(body.userData[1], vertices[0][0], vertices[2][1])
+        if body.userData != None and body.userData[0] == "viking":
+            self.displayImage(body.userData[1], vertices[0][0], vertices[2][1])
         else:
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
 

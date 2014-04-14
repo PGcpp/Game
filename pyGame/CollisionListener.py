@@ -7,13 +7,12 @@ class CollisionListener(b2ContactListener):
         ContactListener.__init__(self)
 
     def BeginContact(self, contact):
-        userData = contact.fixtureA.body.userData
-        if userData != None:
-        	print "viking hitting!"
+        userDataA = contact.fixtureA.body.userData
+        userDataB = contact.fixtureB.body.userData
 
-        userData = contact.fixtureB.body.userData
-        if userData != None:
-        	print "viking hitting!"
+        if userDataA != None and userDataB != None:
+            if (userDataA[0] == "arrow" or userDataA[0] == "viking") and (userDataB[0] == "arrow" or userDataB[0] == "viking"):
+                print "hit!"
 
     def EndContact(self, contact):
         pass

@@ -4,7 +4,7 @@ import Box2D
 from Box2D.b2 import *
 from Enum import *
 
-class Viking():
+class VikingFactory():
 
 	world = None
 	body = None
