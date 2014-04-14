@@ -36,8 +36,7 @@ class DefenseScene(Scene.Scene):
         self.screen = screen
 
     def prepare(self):
-        self.world = world(gravity=(0,-10), doSleep=True)
-        self.world = world(contactListener=CollisionListener(self.world))
+        self.world = world(gravity=(0,-10), doSleep=True, contactListener=CollisionListener())
         self.ground = self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
         self.ground.userData = ["ground"]
 
@@ -61,6 +60,8 @@ class DefenseScene(Scene.Scene):
         pygame.display.flip()
         self.clock.tick(self.TARGET_FPS)
 
+        self.checkAndDestroyBullet()
+
         self.count += 1
         if self.count > self.TARGET_FPS * 5:
             self.count = 0
@@ -74,11 +75,16 @@ class DefenseScene(Scene.Scene):
         VikingFactory(self.world, -2, 5)
 
     def createBullet(self):
-        BulletFactory(self.world, 10, 20)
+        BulletFactory(self.world, 10, 10)
 
     def destroyViking(self, body):
         if body.position[0] > 45:
             self.world.DestroyBody(body)
+
+    def checkAndDestroyBullet(self):
+        if self.world.contactListener.bodyToDestroy != None:
+            self.world.DestroyBody(self.world.contactListener.bodyToDestroy)
+            self.world.contactListener.bodyToDestroy = None
 
     def getBulletSpeed(self, alpha, time, distance, mass):
         v0 = (time * math.cos(alpha)) / distance
