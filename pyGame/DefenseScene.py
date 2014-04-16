@@ -81,9 +81,12 @@ class DefenseScene(Scene.Scene):
             self.world.DestroyBody(body)
 
     def checkAndDestroyBullet(self):
-        if self.world.contactListener.bodyToDestroy != None:
-            self.world.DestroyBody(self.world.contactListener.bodyToDestroy)
-            self.world.contactListener.bodyToDestroy = None
+        if self.world.contactListener.count > 0:
+            for body in self.world.contactListener.bodiesToDestroy:
+                if body != None:
+                    self.world.DestroyBody(body)
+            self.world.contactListener.bodiesToDestroy = [None, None, None, None, None, None, None, None, None, None]
+            self.world.contactListener.count = 0
 
     def getBulletSpeed(self, alpha, time, distance, mass):
         v0 = (time * math.cos(alpha)) / distance
