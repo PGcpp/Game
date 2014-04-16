@@ -18,7 +18,7 @@ from sys import exit
 class DefenseScene(Scene.Scene):
     
     PPM=20.0
-    TARGET_FPS=45
+    TARGET_FPS=60
     TIME_STEP=1.0/TARGET_FPS
     VELOCITY_ITERATIONS=10
     POSITION_ITERATIONS=10
@@ -28,7 +28,6 @@ class DefenseScene(Scene.Scene):
     world = None
     ground = None
     count = 0
-    shoot = True
 
     clock = None
 
@@ -43,8 +42,6 @@ class DefenseScene(Scene.Scene):
         self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
         self.box.CreatePolygonFixture(box=(1,1), density=1, friction=0.3)
         self.box.userData = ["arrow"]
-
-        self.createBullet()
 
         self.clock = pygame.time.Clock()
 
@@ -63,6 +60,8 @@ class DefenseScene(Scene.Scene):
         self.checkAndDestroyBullet()
 
         self.count += 1
+        if self.count == self.TARGET_FPS * 2:
+            self.createBullet()
         if self.count > self.TARGET_FPS * 5:
             self.count = 0
             self.createViking()
@@ -75,7 +74,7 @@ class DefenseScene(Scene.Scene):
         VikingFactory(self.world, -2, 5)
 
     def createBullet(self):
-        BulletFactory(self.world, 10, 10)
+        BulletFactory(self.world, 30, 10)
 
     def destroyViking(self, body):
         if body.position[0] > 45:
@@ -93,7 +92,7 @@ class DefenseScene(Scene.Scene):
 
     def shootBullet(self, body):
         bulletVelocity = self.getBulletSpeed(45, 2, 30, body.mass)
-        body.ApplyForce(vec2(bulletVelocity * 5, bulletVelocity * 5), body.GetWorldPoint((0,0)), True)
+        body.ApplyForce(vec2(bulletVelocity * -10, bulletVelocity * 5), body.GetWorldPoint((0,0)), True)
 
     def mouseEvents(self, event):
         if event.type == pygame.KEYDOWN:
@@ -114,13 +113,13 @@ class DefenseScene(Scene.Scene):
 
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
-
-        if body.userData != None and body.userData[0] == "bullet" and self.shoot:
-            self.shoot = False
+        
+        if body.userData != None and body.userData[0] == "bulletToShoot":
+            body.userData[0] = "bulletShooted"
             self.shootBullet(body)
 
         if body.userData != None and body.userData[0] == "viking":
-            self.displayImage(body.userData[1], vertices[0][0], vertices[2][1])
+            self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
         else:
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
@@ -129,10 +128,6 @@ class DefenseScene(Scene.Scene):
             self.world.DestroyBody(body)
         for joint in self.world.joints:
             self.world.DestroyJoint(joint)
-
-    def displayImage(self, image, xPos, yPos):
-        self.screen.blit(image, (xPos, yPos))
-        pygame.display.flip()
 
     def inGameMenuLoop(self):
         inGameMenuActive = True

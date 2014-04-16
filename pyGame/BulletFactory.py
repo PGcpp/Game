@@ -21,10 +21,10 @@ class BulletFactory():
 
 		self.body = self.world.CreateDynamicBody(position=(xPos, yPos), angle=self.ANGLE)
 		self.body.CreatePolygonFixture(box=(self.B2WIDTH, self.B2HEIGTH), density=self.DENSITY, friction=self.FRICTION)
-		self.body.mass = 100
+		self.body.mass = 10
 		self.bullet = True 
 
 		self.image = pygame.image.load(PARAMS.IMAGEPATH + BUTTONS.names["VIKING"])
 		self.image = self.image.convert()
 
-		self.body.userData = ["bullet", self.image]
+		self.body.userData = ["bulletToShoot", self.image]
