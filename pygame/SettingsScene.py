@@ -30,15 +30,15 @@ class SettingsScene(Scene.Scene):
     def prepare(self):
         
         self.drawBackground()
-        self.buttons[0] = Button(525, 220, "MUSICMINUS")
-        self.buttons[1] = Button(725, 220, "MUSICPLUS")
-        self.buttons[2] = Button(525, 320, "FXMINUS")
-        self.buttons[3] = Button(725, 320, "FXPLUS")
-        self.buttons[4] = Button(487, 420, "DIFFICULTYEASY")
-        self.buttons[5] = Button(580, 420, "DIFFICULTYMEDIUM")
-        self.buttons[6] = Button(697, 420, "DIFFICULTYHARD")
-        self.buttons[7] = Button(475, 525, "EXITSETTINGS")
-        self.buttons[8] = Button(625,525, "SAVESETTINGS")
+        self.buttons[0] = Button(800, 210, "MUSICMINUS")
+        self.buttons[1] = Button(1025, 210, "MUSICPLUS")
+        self.buttons[2] = Button(800, 325, "FXMINUS")
+        self.buttons[3] = Button(1025, 325, "FXPLUS")
+        self.buttons[4] = Button(775, 420, "DIFFICULTYEASY")
+        self.buttons[5] = Button(875, 420, "DIFFICULTYMEDIUM")
+        self.buttons[6] = Button(1000, 420, "DIFFICULTYHARD")
+        self.buttons[7] = Button(775, 625, "EXITSETTINGS")
+        self.buttons[8] = Button(950, 625, "SAVESETTINGS")
 
         for button in self.buttons:
             button.displayImage(self.screen)
@@ -62,15 +62,23 @@ class SettingsScene(Scene.Scene):
         elif self.difficulty > 3:
             self.difficulty = 3
 
+        #drukowanie etykiet
+        musicSettingsLabel = pygame.image.load("resources/musicSettingsLabel.png")
+        effectsSettingsLabel = pygame.image.load("resources/effectsSettingsLabel.png")
+        levelSettingsLabel = pygame.image.load("resources/levelSettingsLabel.png")
+        self.screen.blit(musicSettingsLabel, (775, 160))
+        self.screen.blit(effectsSettingsLabel, (775, 275))
+        self.screen.blit(levelSettingsLabel, (775, 400))
+
         self.PrintSettings()
 
     def PrintSettings(self):
         musicLevelImage = pygame.image.load("resources/value"+str(self.musicLevel)+".png")
         effectsLevelImage = pygame.image.load("resources/value"+str(self.effectsLevel)+".png")
         difficultyImage = pygame.image.load("resources/difficulty"+str(self.difficulty)+".png")
-        self.screen.blit(musicLevelImage, (562, 195))
-        self.screen.blit(effectsLevelImage, (562, 295))
-        self.screen.blit(difficultyImage, (480, 420))
+        self.screen.blit(musicLevelImage, (850, 185))
+        self.screen.blit(effectsLevelImage, (850, 300))
+        self.screen.blit(difficultyImage, (775, 420))
         pygame.display.flip()
         
         self.menuSound.set_volume( self.musicLevel * 0.2 )
@@ -80,6 +88,7 @@ class SettingsScene(Scene.Scene):
             self.checkButton(event)
 
     def drawBackground(self):
+        self.screen.fill((0,0,0,0))
         image = pygame.image.load("resources/settingsBackground.png")
         self.screen.blit(image, (0, 0))
         pygame.display.flip()

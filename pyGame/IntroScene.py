@@ -45,6 +45,7 @@ class IntroScene(Scene.Scene):
             self.fadeLevel -= 25
 
             if self.fadeLevel == 5:
+                self.introImage.set_alpha(0)
                 self.state = STATE.STOPPED
                 self.stop()
 
@@ -52,7 +53,7 @@ class IntroScene(Scene.Scene):
 
         self.screen.fill((0,0,0));
         self.introImage.set_alpha( self.fadeLevel )
-        self.screen.blit(self.introImage, (200, 100))
+        self.screen.blit(self.introImage, (390, 110))
         pygame.display.flip()
  
         

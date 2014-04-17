@@ -22,9 +22,9 @@ class MenuScene(Scene.Scene):
         
         self.drawBackground()
 
-        self.buttons[0] = Button(500, 160, "NEW_GAME")
-        self.buttons[1] = Button(500, 260, "OPTIONS")
-        self.buttons[2] = Button(500, 360, "EXIT")
+        self.buttons[0] = Button(800, 160, "NEW_GAME")
+        self.buttons[1] = Button(800, 260, "OPTIONS")
+        self.buttons[2] = Button(800, 360, "EXIT")
 
         for button in self.buttons:
             button.displayImage(self.screen)
@@ -34,6 +34,7 @@ class MenuScene(Scene.Scene):
             self.checkButton(event)
 
     def drawBackground(self):
+        self.screen.fill((0,0,0,0))
         image = pygame.image.load("resources/menuBackground.png")
         self.screen.blit(image, (0, 0))
         pygame.display.flip()

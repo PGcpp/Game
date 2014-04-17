@@ -15,7 +15,7 @@ except ImportError:
 
 class Game():
 
-        SCREEN_SIZE = (800, 600)
+        SCREEN_SIZE = (1280, 720)
         BUFFER_MODE = DOUBLEBUF
         screen = None
 
@@ -37,14 +37,14 @@ class Game():
 
                 self.menuSound = pygame.mixer.Sound("resources/menu.wav")
                 
-                introScene = IntroScene.IntroScene(self.screen)
-                introScene.start()
+                #introScene = IntroScene.IntroScene(self.screen)
+                #introScene.start()
                 
-                while introScene.state == STATE.RUNNING:
-                        pass
+                #while introScene.state == STATE.RUNNING:
+                #        pass
 
-                if introScene.state == STATE.EXIT:
-                        self.Exit()
+                #if introScene.state == STATE.EXIT:
+                #        self.Exit()
 
                 while True:
 
