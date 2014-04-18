@@ -26,4 +26,4 @@ class Bullet():
                 self.speed = speed
                 self.damage = damage
                 self.image = pygame.image.load( image )
-                self.image = self.image.convert()
+                self.image = self.image.convert_alpha()

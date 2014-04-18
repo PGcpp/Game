@@ -37,7 +37,7 @@ class Defender():
 		self.image = pygame.image.load(PARAMS.IMAGEPATH + BUTTONS.names["VIKING"])
 		self.image = self.image.convert()
 
-		self.body.userData = ["bulletToShoot", self.image]
+		self.body.userData = ["defender", self.image]
 
         #jak dlugo chce zeby lecialo
         def getYVelocity(self, time, base):
@@ -58,6 +58,7 @@ class Defender():
                 bulletBody = self.world.CreateDynamicBody(position=(self.xPos - 1, self.yPos), angle=bullet.ANGLE) #chcemy utworzyc pocisk obok defendera a nie na nim stad self.xPos - 1
 		bulletBody.CreatePolygonFixture(box=(bullet.B2WIDTH, bullet.B2HEIGTH), density=bullet.DENSITY, friction=bullet.FRICTION) 
                 bulletBody.mass = 1  #bardzo wazne! zmiana masy totalnie wszystko zmienia - czasem lotu pocisku manipulujemy za pomoca speed
+                bulletBody.fixtures[0].sensor = True
 		bulletBody.userData = ["bullet", bullet.image]
 
                 #pocisk stworzony teraz strzal
@@ -68,7 +69,7 @@ class Defender():
                 Vx = self.getXVelocity(time, distance)
 
                 #BUM!
-                bulletBody.ApplyLinearImpulse( vec2( -Vx , Vy), (self.xPos - 1, self.yPos), True ) # -Vx bo chcemy strzelac z prawej strony w lewa [wieze mamy po prawej przeciwnicy z lewej]
+                bulletBody.ApplyLinearImpulse( vec2( -Vx , Vy), (self.xPos - 1, self.yPos - 0.1), True ) # -Vx bo chcemy strzelac z prawej strony w lewa [wieze mamy po prawej przeciwnicy z lewej]
                                                                                                    # a self.xPos - 1 bo pocisk utworzony w self.xPos - 1, chcemy przylozyc sile w jego srodku
                 #pocisk wystrzelony modyfikacja userData
 		

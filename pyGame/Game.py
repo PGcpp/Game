@@ -3,15 +3,15 @@ from pygame.locals import *
 from Enum import *
 import sys
 
-try:
-        import IntroScene
-        import DefenseScene
-        import MenuScene
-        import SettingsScene
-        import Settings
-except ImportError:
-        print "\nUnable to import library class\n"
-        sys.exit(2)
+#try:
+import IntroScene
+import DefenseScene
+import MenuScene
+import SettingsScene
+import Settings
+#except ImportError:
+#        print "\nUnable to import library class\n"
+#        sys.exit(2)
 
 class Game():
 

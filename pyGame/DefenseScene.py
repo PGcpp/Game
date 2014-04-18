@@ -18,7 +18,7 @@ from sys import exit
 class DefenseScene(Scene.Scene):
     
     PPM=20.0
-    TARGET_FPS=60
+    TARGET_FPS=100
     TIME_STEP=1.0/TARGET_FPS
     VELOCITY_ITERATIONS=10
     POSITION_ITERATIONS=10
@@ -61,6 +61,7 @@ class DefenseScene(Scene.Scene):
         self.defenders[2].addBullet( 1, 1, 15, 10, "resources/bullet1.png" )
 
     def step(self):
+        print "FPS: " + str( self.clock.get_fps() )
         self.screen.fill((0,0,0,0))
         for body in self.world.bodies:
             self.destroyViking(body)
@@ -78,7 +79,7 @@ class DefenseScene(Scene.Scene):
         
         for d in self.defenders:
             if self.count % d.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
-                d.shoot(40) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+                d.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
 
         if self.count > self.TARGET_FPS * 5:
             self.count = 0
@@ -125,6 +126,8 @@ class DefenseScene(Scene.Scene):
         
         if body.userData != None and body.userData[0] == "viking":
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
+        if body.userData != None and (body.userData[0] == "bullet" or body.userData[0] == "bulletShooted"):   
+            self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
         else:
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
