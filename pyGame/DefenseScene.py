@@ -3,8 +3,8 @@ from pygame.locals import *
 from Button import *
 import VikingFactory
 from VikingFactory import *
-import BulletFactory
-from BulletFactory import *
+import Bullet
+from Defender import *
 import CollisionListener
 from CollisionListener import *
 
@@ -27,16 +27,22 @@ class DefenseScene(Scene.Scene):
 
     world = None
     ground = None
+    groundTexture = None
     count = 0
 
     clock = None
+
+    defenders = [] #lista obroncow
 
     def DefenseScene(screen):
         self.screen = screen
 
     def prepare(self):
         self.world = world(gravity=(0,-10), doSleep=True, contactListener=CollisionListener())
-        self.ground = self.world.CreateStaticBody(position=(0,1), shapes=polygonShape(box=(50,5)))
+        
+        self.ground = self.world.CreateStaticBody(position=(0,-2), shapes=polygonShape(box=(64,4)))
+        self.groundTexture = pygame.image.load("resources/ground.png")
+	self.groundTexture = self.groundTexture.convert()
         self.ground.userData = ["ground"]
 
         self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
@@ -44,6 +50,15 @@ class DefenseScene(Scene.Scene):
         self.box.userData = ["arrow"]
 
         self.clock = pygame.time.Clock()
+
+        self.defenders.append( Defender(self.world, 60, 10, 100) ) #bedziemy strzelac raz na 100 klatek
+        self.defenders[0].addBullet( 1, 1, 20, 10, "resources/bullet1.png" )
+
+        self.defenders.append( Defender(self.world, 60, 14, 50) )
+        self.defenders[1].addBullet( 1, 1, 5, 10, "resources/bullet1.png" )
+
+        self.defenders.append( Defender(self.world, 60, 18, 200) )
+        self.defenders[2].addBullet( 1, 1, 15, 10, "resources/bullet1.png" )
 
     def step(self):
         self.screen.fill((0,0,0,0))
@@ -60,8 +75,11 @@ class DefenseScene(Scene.Scene):
         self.checkAndDestroyBullet()
 
         self.count += 1
-        if self.count == self.TARGET_FPS * 2:
-            self.createBullet()
+        
+        for d in self.defenders:
+            if self.count % d.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
+                d.shoot(40) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+
         if self.count > self.TARGET_FPS * 5:
             self.count = 0
             self.createViking()
@@ -73,11 +91,8 @@ class DefenseScene(Scene.Scene):
     def createViking(self):
         VikingFactory(self.world, -2, 5)
 
-    def createBullet(self):
-        BulletFactory(self.world, 30, 10)
-
     def destroyViking(self, body):
-        if body.position[0] > 45:
+        if body.position[0] > 64:
             self.world.DestroyBody(body)
 
     def checkAndDestroyBullet(self):
@@ -87,15 +102,6 @@ class DefenseScene(Scene.Scene):
                     self.world.DestroyBody(body)
             self.world.contactListener.bodiesToDestroy = [None, None, None, None, None, None, None, None, None, None]
             self.world.contactListener.count = 0
-
-    def getBulletSpeed(self, alpha, time, distance, mass):
-        v0 = (time * math.cos(alpha)) / distance
-        f = (mass * time) / v0
-        return f
-
-    def shootBullet(self, body):
-        bulletVelocity = self.getBulletSpeed(45, 2, 30, body.mass)
-        body.ApplyForce(vec2(bulletVelocity * -10, bulletVelocity * 5), body.GetWorldPoint((0,0)), True)
 
     def mouseEvents(self, event):
         if event.type == pygame.KEYDOWN:
@@ -117,14 +123,13 @@ class DefenseScene(Scene.Scene):
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
         
-        if body.userData != None and body.userData[0] == "bulletToShoot":
-            body.userData[0] = "bulletShooted"
-            self.shootBullet(body)
-
         if body.userData != None and body.userData[0] == "viking":
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
         else:
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
+
+        #rysowanie tekstury ground
+        self.screen.blit( self.groundTexture, (0, 559) )
 
     def dispose(self):
         for body in self.world.bodies:

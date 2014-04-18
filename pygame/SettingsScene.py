@@ -32,8 +32,8 @@ class SettingsScene(Scene.Scene):
         self.drawBackground()
         self.buttons[0] = Button(800, 210, "MUSICMINUS")
         self.buttons[1] = Button(1025, 210, "MUSICPLUS")
-        self.buttons[2] = Button(800, 325, "FXMINUS")
-        self.buttons[3] = Button(1025, 325, "FXPLUS")
+        self.buttons[2] = Button(800, 345, "FXMINUS")
+        self.buttons[3] = Button(1025, 345, "FXPLUS")
         self.buttons[4] = Button(775, 420, "DIFFICULTYEASY")
         self.buttons[5] = Button(875, 420, "DIFFICULTYMEDIUM")
         self.buttons[6] = Button(1000, 420, "DIFFICULTYHARD")
@@ -67,8 +67,8 @@ class SettingsScene(Scene.Scene):
         effectsSettingsLabel = pygame.image.load("resources/effectsSettingsLabel.png")
         levelSettingsLabel = pygame.image.load("resources/levelSettingsLabel.png")
         self.screen.blit(musicSettingsLabel, (775, 160))
-        self.screen.blit(effectsSettingsLabel, (775, 275))
-        self.screen.blit(levelSettingsLabel, (775, 400))
+        self.screen.blit(effectsSettingsLabel, (775, 290))
+        self.screen.blit(levelSettingsLabel, (775, 410))
 
         self.PrintSettings()
 
@@ -77,8 +77,8 @@ class SettingsScene(Scene.Scene):
         effectsLevelImage = pygame.image.load("resources/value"+str(self.effectsLevel)+".png")
         difficultyImage = pygame.image.load("resources/difficulty"+str(self.difficulty)+".png")
         self.screen.blit(musicLevelImage, (850, 185))
-        self.screen.blit(effectsLevelImage, (850, 300))
-        self.screen.blit(difficultyImage, (775, 420))
+        self.screen.blit(effectsLevelImage, (850, 320))
+        self.screen.blit(difficultyImage, (775, 460))
         pygame.display.flip()
         
         self.menuSound.set_volume( self.musicLevel * 0.2 )
