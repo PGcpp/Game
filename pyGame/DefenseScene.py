@@ -18,7 +18,7 @@ from sys import exit
 class DefenseScene(Scene.Scene):
     
     PPM=20.0
-    TARGET_FPS=100
+    TARGET_FPS=60
     TIME_STEP=1.0/TARGET_FPS
     VELOCITY_ITERATIONS=10
     POSITION_ITERATIONS=10
@@ -30,9 +30,12 @@ class DefenseScene(Scene.Scene):
     groundTexture = None
     count = 0
 
+    tower = []
+
     clock = None
 
     defenders = [] #lista obroncow
+    defenderSprite = None
 
     def DefenseScene(screen):
         self.screen = screen
@@ -45,6 +48,21 @@ class DefenseScene(Scene.Scene):
 	self.groundTexture = self.groundTexture.convert()
         self.ground.userData = ["ground"]
 
+        self.defenderSprite = pygame.image.load("resources/defender_none.png").convert_alpha()
+
+        self.tower.append( pygame.image.load("resources/brick1.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/brick2.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/brick3.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/brick4.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/stone1.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/stone2.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/stone3.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/stone4.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/steel1.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/steel2.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/steel3.png").convert_alpha() )
+        self.tower.append( pygame.image.load("resources/steel4.png").convert_alpha() )
+        
         self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
         self.box.CreatePolygonFixture(box=(1,1), density=1, friction=0.3)
         self.box.userData = ["arrow"]
@@ -52,13 +70,13 @@ class DefenseScene(Scene.Scene):
         self.clock = pygame.time.Clock()
 
         self.defenders.append( Defender(self.world, 60, 10, 100) ) #bedziemy strzelac raz na 100 klatek
-        self.defenders[0].addBullet( 1, 1, 20, 10, "resources/bullet1.png" )
+        self.defenders[0].addBullet( 1, 1, 1, 10, "resources/bullet1.png" )
 
         self.defenders.append( Defender(self.world, 60, 14, 50) )
-        self.defenders[1].addBullet( 1, 1, 5, 10, "resources/bullet1.png" )
+        self.defenders[1].addBullet( 1, 1, 15, 10, "resources/bullet1.png" )
 
         self.defenders.append( Defender(self.world, 60, 18, 200) )
-        self.defenders[2].addBullet( 1, 1, 15, 10, "resources/bullet1.png" )
+        self.defenders[2].addBullet( 1, 1, 30, 10, "resources/bullet1.png" )
 
     def step(self):
         print "FPS: " + str( self.clock.get_fps() )
@@ -130,6 +148,19 @@ class DefenseScene(Scene.Scene):
             self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
         else:
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
+
+        #rysowanie tekstury wiezy
+        self.screen.blit( self.tower[4], (999, 476) )
+        self.screen.blit( self.tower[5], (1012, 396) )
+        self.screen.blit( self.tower[2], (1023, 312) )
+        self.screen.blit( self.tower[3], (1030, 228) )
+        self.screen.blit( pygame.image.load("resources/top.png").convert_alpha(), (1035, 180) )
+
+        #rysowanie defenderow
+        self.screen.blit( self.defenderSprite, ( 1069, 486 ) )
+        self.screen.blit( self.defenderSprite, ( 1069, 406 ) )
+        self.screen.blit( self.defenderSprite, ( 1069, 322 ) )
+        self.screen.blit( self.defenderSprite, ( 1069, 238 ) )
 
         #rysowanie tekstury ground
         self.screen.blit( self.groundTexture, (0, 559) )
