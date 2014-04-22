@@ -30,23 +30,33 @@ class DefenseScene(Scene.Scene):
     groundTexture = None
     count = 0
 
+    showFloorMenu = False
+    activeFloorMenu = None
+
+    backgroundTexture = None
+
     tower = []
+
+    buttons = [None, None, None, None, None]
 
     clock = None
 
-    defenders = [] #lista obroncow
+    defenders = [None, None, None, None] #lista obroncow
     defenderSprite = None
 
     def DefenseScene(screen):
         self.screen = screen
 
     def prepare(self):
+        print "LECI!"
         self.world = world(gravity=(0,-10), doSleep=True, contactListener=CollisionListener())
         
         self.ground = self.world.CreateStaticBody(position=(0,-2), shapes=polygonShape(box=(64,4)))
         self.groundTexture = pygame.image.load("resources/ground.png")
 	self.groundTexture = self.groundTexture.convert()
         self.ground.userData = ["ground"]
+
+        self.backgroundTexture = pygame.image.load("resources/gameBackground.png").convert()
 
         self.defenderSprite = pygame.image.load("resources/defender_none.png").convert_alpha()
 
@@ -58,29 +68,17 @@ class DefenseScene(Scene.Scene):
         self.tower.append( pygame.image.load("resources/stone2.png").convert_alpha() )
         self.tower.append( pygame.image.load("resources/stone3.png").convert_alpha() )
         self.tower.append( pygame.image.load("resources/stone4.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/steel1.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/steel2.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/steel3.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/steel4.png").convert_alpha() )
         
-        self.box = self.world.CreateDynamicBody(position=(20, 5), angle=0)
-        self.box.CreatePolygonFixture(box=(1,1), density=1, friction=0.3)
-        self.box.userData = ["arrow"]
-
         self.clock = pygame.time.Clock()
 
-        self.defenders.append( Defender(self.world, 60, 10, 100) ) #bedziemy strzelac raz na 100 klatek
-        self.defenders[0].addBullet( 1, 1, 1, 10, "resources/bullet1.png" )
-
-        self.defenders.append( Defender(self.world, 60, 14, 50) )
-        self.defenders[1].addBullet( 1, 1, 15, 10, "resources/bullet1.png" )
-
-        self.defenders.append( Defender(self.world, 60, 18, 200) )
-        self.defenders[2].addBullet( 1, 1, 30, 10, "resources/bullet1.png" )
+        self.defenders[0] = Defender(self.world, 55,  4, -1)
+        self.defenders[1] = Defender(self.world, 55,  8, -1)
+        self.defenders[2] = Defender(self.world, 55, 12, -1) 
+        self.defenders[3] = Defender(self.world, 55, 16, -1) 
 
     def step(self):
-        print "FPS: " + str( self.clock.get_fps() )
-        self.screen.fill((0,0,0,0))
+        #print "FPS: " + str( self.clock.get_fps() )
+        self.screen.blit( self.backgroundTexture, (0,0) )
         for body in self.world.bodies:
             self.destroyViking(body)
             for fixture in body.fixtures:
@@ -96,8 +94,9 @@ class DefenseScene(Scene.Scene):
         self.count += 1
         
         for d in self.defenders:
-            if self.count % d.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
-                d.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+            if d.interval > 0:
+                if self.count % d.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
+                    d.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
 
         if self.count > self.TARGET_FPS * 5:
             self.count = 0
@@ -106,6 +105,32 @@ class DefenseScene(Scene.Scene):
         for event in self.eventQueue:
             if event.type==KEYDOWN and event.key==K_ESCAPE:
                 self.inGameMenuLoop()
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                        for button in self.buttons:
+                            if button != None:
+                                x, y = event.pos
+                                if button.isHit(x, y):
+
+                                    print button.name
+                        
+                                    if button.name == "FLOOR1":
+                                        self.showFloorMenu = True
+                                        self.activeFloorMenu = 1
+
+                                    if button.name == "FLOOR2":
+                                        self.showFloorMenu = True
+                                        self.activeFloorMenu = 2
+
+                                    if button.name == "FLOOR3":
+                                        self.showFloorMenu = True
+                                        self.activeFloorMenu = 3
+
+                                    if button.name == "FLOOR4":
+                                        self.showFloorMenu = True
+                                        self.activeFloorMenu = 4
+                                    if button.name == "CLOSEFLOORMENU":
+                                        self.showFloorMenu = False
 
     def createViking(self):
         VikingFactory(self.world, -2, 5)
@@ -151,10 +176,9 @@ class DefenseScene(Scene.Scene):
 
         #rysowanie tekstury wiezy
         self.screen.blit( self.tower[4], (999, 476) )
-        self.screen.blit( self.tower[5], (1012, 396) )
-        self.screen.blit( self.tower[2], (1023, 312) )
-        self.screen.blit( self.tower[3], (1030, 228) )
-        self.screen.blit( pygame.image.load("resources/top.png").convert_alpha(), (1035, 180) )
+        self.screen.blit( self.tower[5], (1012, 392) )
+        self.screen.blit( self.tower[6], (1023, 308) )
+        self.screen.blit( self.tower[7], (1016, 140 ) )
 
         #rysowanie defenderow
         self.screen.blit( self.defenderSprite, ( 1069, 486 ) )
@@ -165,22 +189,46 @@ class DefenseScene(Scene.Scene):
         #rysowanie tekstury ground
         self.screen.blit( self.groundTexture, (0, 559) )
 
+        #rysowanie stanu kasy
+        moneyFont = pygame.font.SysFont("monospace", 25, True)
+        moneyLabel = moneyFont.render("Money:", 1, (255,255,0))
+        self.screen.blit(moneyLabel, (15, 10))
+
+        amountLabel = moneyFont.render(str(self.count), 1, (255,255,0))
+        self.screen.blit(amountLabel, (110, 10))
+
+        #rysowanie przyciskow
+        self.buttons[0] = Button(1049, 486, "FLOOR1")
+        self.buttons[1] = Button(1049, 406, "FLOOR2")
+        self.buttons[2] = Button(1049, 322, "FLOOR3")
+        self.buttons[3] = Button(1049, 238, "FLOOR4")
+
+        for button in self.buttons:
+            if button != None:
+                button.displayImage(self.screen, False)
+
+        #rysowanie floorMenu
+        if self.showFloorMenu:
+            self.doShowFloorMenu()
+
     def dispose(self):
         for body in self.world.bodies:
             self.world.DestroyBody(body)
         for joint in self.world.joints:
             self.world.DestroyJoint(joint)
-
+        defenders = [None, None, None, None]
+        self.tower = []
+            
     def inGameMenuLoop(self):
         inGameMenuActive = True
 
         inGameMenuBackground = pygame.image.load("resources/inGameMenuBackground.png")
-        self.screen.blit(inGameMenuBackground, (225, 100))
+        self.screen.blit(inGameMenuBackground, (440, 100))
         pygame.display.flip()
 
         buttons = [None, None]
-        buttons[0] = Button(315, 235, "RESUMEGAME")
-        buttons[1] = Button(315, 310, "QUITGAME")
+        buttons[0] = Button(530, 235, "RESUMEGAME")
+        buttons[1] = Button(530, 310, "QUITGAME")
 
         for button in buttons:
             button.displayImage(self.screen)
@@ -210,3 +258,9 @@ class DefenseScene(Scene.Scene):
                                 self.state = STATE.STOPPED
                                 self.stop()
 
+    def doShowFloorMenu(self):
+        #tu powinny byc wszystkie przyciski do dodawania do defenderow roznych rzeczy
+        floorMenuBackground = pygame.image.load("resources/floorMenu.png").convert_alpha()
+        self.screen.blit(floorMenuBackground, (940, 590))
+
+        self.buttons[4] = Button(1200, 590, "CLOSEFLOORMENU")

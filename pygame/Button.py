@@ -15,12 +15,13 @@ class Button():
 		self.yPos = yPos		
 		self.name = buttonName
 		
-		self.image = pygame.image.load(PARAMS.IMAGEPATH + BUTTONS.names[buttonName])
+		self.image = pygame.image.load(PARAMS.IMAGEPATH + BUTTONS.names[buttonName]).convert_alpha()
 		self.width, self.height = self.image.get_size()
 		
-	def displayImage(self, screen):
+	def displayImage(self, screen, doFlip = True):
                 screen.blit(self.image, (self.xPos, self.yPos))
-                pygame.display.flip()
+                if doFlip:
+                        pygame.display.flip()
 
 	def isHit(self, xPos, yPos):
 		if xPos > self.xPos and xPos < (self.xPos + self.width) and yPos > self.yPos and yPos < (self.yPos + self.height):

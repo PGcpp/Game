@@ -32,6 +32,12 @@ class BUTTONS:
         #ingame menu
         "RESUMEGAME": "resumeGameButton.png",
         "QUITGAME": "quitGameButton.png",
-    #defense scene
-    "VIKING":"viking.png"
+        #floors of tower
+        "FLOOR1": "floorButton.png",
+        "FLOOR2": "floorButton.png",
+        "FLOOR3": "floorButton.png",
+        "FLOOR4": "floorButton.png",
+        "CLOSEFLOORMENU": "closeFloorMenuButton.png",
+        #defense scene
+        "VIKING":"viking.png"
 	}
