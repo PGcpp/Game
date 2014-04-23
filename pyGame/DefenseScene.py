@@ -7,6 +7,7 @@ import Bullet
 from Defender import *
 import CollisionListener
 from CollisionListener import *
+from TowerFloor import *
 
 import math
 import Scene
@@ -18,7 +19,7 @@ from sys import exit
 class DefenseScene(Scene.Scene):
     
     PPM=20.0
-    TARGET_FPS=60
+    TARGET_FPS=60.0
     TIME_STEP=1.0/TARGET_FPS
     VELOCITY_ITERATIONS=10
     POSITION_ITERATIONS=10
@@ -35,20 +36,18 @@ class DefenseScene(Scene.Scene):
 
     backgroundTexture = None
 
-    tower = []
+    towerFloors = [None, None, None, None]
 
-    buttons = [None, None, None, None, None]
+    buttons = [None, None, None, None, None, None, None, None, None, None]
 
     clock = None
 
-    defenders = [None, None, None, None] #lista obroncow
-    defenderSprite = None
+    money = None
 
     def DefenseScene(screen):
         self.screen = screen
 
     def prepare(self):
-        print "LECI!"
         self.world = world(gravity=(0,-10), doSleep=True, contactListener=CollisionListener())
         
         self.ground = self.world.CreateStaticBody(position=(0,-2), shapes=polygonShape(box=(64,4)))
@@ -58,26 +57,22 @@ class DefenseScene(Scene.Scene):
 
         self.backgroundTexture = pygame.image.load("resources/gameBackground.png").convert()
 
-        self.defenderSprite = pygame.image.load("resources/defender_none.png").convert_alpha()
+        self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 100 )
+        self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 100 )
+        self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 50 )
+        self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 100 )
+                
+        self.towerFloors[0].setDefender("CATAPULT")
+        self.towerFloors[1].setDefender("NONE")
+        self.towerFloors[2].setDefender("ARCHER")
+        self.towerFloors[3].setDefender("SLINGER")
 
-        self.tower.append( pygame.image.load("resources/brick1.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/brick2.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/brick3.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/brick4.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/stone1.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/stone2.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/stone3.png").convert_alpha() )
-        self.tower.append( pygame.image.load("resources/stone4.png").convert_alpha() )
-        
         self.clock = pygame.time.Clock()
 
-        self.defenders[0] = Defender(self.world, 55,  4, -1)
-        self.defenders[1] = Defender(self.world, 55,  8, -1)
-        self.defenders[2] = Defender(self.world, 55, 12, -1) 
-        self.defenders[3] = Defender(self.world, 55, 16, -1) 
+        self.money = 10000
 
     def step(self):
-        #print "FPS: " + str( self.clock.get_fps() )
+        print "FPS: " + str( self.clock.get_fps() )
         self.screen.blit( self.backgroundTexture, (0,0) )
         for body in self.world.bodies:
             self.destroyViking(body)
@@ -93,10 +88,10 @@ class DefenseScene(Scene.Scene):
 
         self.count += 1
         
-        for d in self.defenders:
-            if d.interval > 0:
-                if self.count % d.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
-                    d.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+        for t in self.towerFloors:
+            if t.defender.interval > 0:
+                if self.count % t.defender.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
+                    t.defender.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
 
         if self.count > self.TARGET_FPS * 5:
             self.count = 0
@@ -116,21 +111,34 @@ class DefenseScene(Scene.Scene):
                         
                                     if button.name == "FLOOR1":
                                         self.showFloorMenu = True
-                                        self.activeFloorMenu = 1
+                                        self.activeFloorMenu = 0
 
                                     if button.name == "FLOOR2":
                                         self.showFloorMenu = True
-                                        self.activeFloorMenu = 2
+                                        self.activeFloorMenu = 1
 
                                     if button.name == "FLOOR3":
                                         self.showFloorMenu = True
-                                        self.activeFloorMenu = 3
+                                        self.activeFloorMenu = 2
 
                                     if button.name == "FLOOR4":
                                         self.showFloorMenu = True
-                                        self.activeFloorMenu = 4
+                                        self.activeFloorMenu = 3
                                     if button.name == "CLOSEFLOORMENU":
                                         self.showFloorMenu = False
+                                        
+                                    if button.name == "UPGRADEFLOORLEVEL":
+                                        if self.money >= 7000 and self.towerFloors[self.activeFloorMenu].level < 1:
+                                            self.towerFloors[self.activeFloorMenu].level += 1
+                                            self.towerFloors[self.activeFloorMenu].hp = 100 * (self.towerFloors[self.activeFloorMenu].level + 1)
+                                            self.money -= 7000
+                                            
+                                    if button.name == "FIXTOWERFLOOR":
+                                        cost = (100 - self.towerFloors[self.activeFloorMenu].hp) * 5
+
+                                        if self.money >= cost and self.towerFloors[self.activeFloorMenu].hp < (100 * (self.towerFloors[self.activeFloorMenu].level + 1) ):
+                                            self.towerFloors[self.activeFloorMenu].hp = (100 * (self.towerFloors[self.activeFloorMenu].level + 1) )
+                                            self.money -= cost
 
     def createViking(self):
         VikingFactory(self.world, -2, 5)
@@ -175,16 +183,14 @@ class DefenseScene(Scene.Scene):
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
         #rysowanie tekstury wiezy
-        self.screen.blit( self.tower[4], (999, 476) )
-        self.screen.blit( self.tower[5], (1012, 392) )
-        self.screen.blit( self.tower[6], (1023, 308) )
-        self.screen.blit( self.tower[7], (1016, 140 ) )
+        for tF in self.towerFloors:
+            self.screen.blit( tF.image[tF.level], (tF.xPos * 20, tF.yPos * 20) )
 
         #rysowanie defenderow
-        self.screen.blit( self.defenderSprite, ( 1069, 486 ) )
-        self.screen.blit( self.defenderSprite, ( 1069, 406 ) )
-        self.screen.blit( self.defenderSprite, ( 1069, 322 ) )
-        self.screen.blit( self.defenderSprite, ( 1069, 238 ) )
+        self.screen.blit( self.towerFloors[0].defender.image, ( 1069, 486 ) )
+        self.screen.blit( self.towerFloors[1].defender.image, ( 1069, 406 ) )
+        self.screen.blit( self.towerFloors[2].defender.image, ( 1069, 322 ) )
+        self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 238 ) )
 
         #rysowanie tekstury ground
         self.screen.blit( self.groundTexture, (0, 559) )
@@ -194,8 +200,16 @@ class DefenseScene(Scene.Scene):
         moneyLabel = moneyFont.render("Money:", 1, (255,255,0))
         self.screen.blit(moneyLabel, (15, 10))
 
-        amountLabel = moneyFont.render(str(self.count), 1, (255,255,0))
+        amountLabel = moneyFont.render(str(self.money), 1, (255,255,0))
         self.screen.blit(amountLabel, (110, 10))
+
+        #rysowanie floorMenu
+        if self.showFloorMenu:
+            self.doShowFloorMenu()
+        else:
+            self.buttons[4] = None
+            self.buttons[5] = None
+            self.buttons[6] = None
 
         #rysowanie przyciskow
         self.buttons[0] = Button(1049, 486, "FLOOR1")
@@ -207,17 +221,17 @@ class DefenseScene(Scene.Scene):
             if button != None:
                 button.displayImage(self.screen, False)
 
-        #rysowanie floorMenu
-        if self.showFloorMenu:
-            self.doShowFloorMenu()
-
     def dispose(self):
         for body in self.world.bodies:
             self.world.DestroyBody(body)
         for joint in self.world.joints:
             self.world.DestroyJoint(joint)
-        defenders = [None, None, None, None]
-        self.tower = []
+            
+        for b in self.buttons:
+            b = None
+            
+        for t in self.towerFloors:
+            t = None
             
     def inGameMenuLoop(self):
         inGameMenuActive = True
@@ -259,8 +273,57 @@ class DefenseScene(Scene.Scene):
                                 self.stop()
 
     def doShowFloorMenu(self):
-        #tu powinny byc wszystkie przyciski do dodawania do defenderow roznych rzeczy
+        #tlo menu
         floorMenuBackground = pygame.image.load("resources/floorMenu.png").convert_alpha()
         self.screen.blit(floorMenuBackground, (940, 590))
 
+        #przycisk do wylaczania menu
         self.buttons[4] = Button(1200, 590, "CLOSEFLOORMENU")
+
+        #wypisywanie zawartosci menu - tekst
+        floorMenuFont = pygame.font.SysFont("monospace", 12, True)
+        LevelLabel = floorMenuFont.render("LVL:", 1, (0,0,0))
+        LevelValue = floorMenuFont.render(str( self.towerFloors[self.activeFloorMenu].level ), 1, (0,0,0))
+        HPLabel = floorMenuFont.render("HP:", 1, (0,0,0))
+        HPValue = floorMenuFont.render(str( self.towerFloors[self.activeFloorMenu].hp ), 1, (0,0,0))
+        UpgradeLevelValue = floorMenuFont.render("7000$", 1, (100,100,0))
+        FixTowerFloorValue = floorMenuFont.render(str( ((100 * (self.towerFloors[self.activeFloorMenu].level + 1) ) - self.towerFloors[self.activeFloorMenu].hp) * 5 ) + "$", 1, (0,100,0))
+
+        dName = str( self.towerFloors[self.activeFloorMenu].defender.name )
+        if len(dName) <= 4:
+            dName = '  '+dName
+        elif len(dName) <= 6:
+            dName = ' '+dName
+            
+        DefenderNameLabel = floorMenuFont.render( dName, 1, (0,0,0))
+        AttackLabel = floorMenuFont.render("ATTACK:", 1, (0,0,0))
+        ReloadLabel = floorMenuFont.render("RELOAD:", 1, (0,0,0))
+        SpeedLabel = floorMenuFont.render(" SPEED:", 1, (0,0,0))
+        
+
+        self.screen.blit(LevelLabel, (950, 630))
+        self.screen.blit(LevelValue, (980, 630))
+        self.screen.blit(UpgradeLevelValue, (980, 645))
+        self.screen.blit(HPLabel, (950, 668))
+        self.screen.blit(HPValue, (970, 668))
+        self.screen.blit(FixTowerFloorValue, (980, 685))
+
+        self.screen.blit(DefenderNameLabel, (1035, 630))
+        self.screen.blit(AttackLabel, (1105, 650))
+        self.screen.blit(ReloadLabel, (1105, 670))
+        self.screen.blit(SpeedLabel,  (1105, 690))
+
+        #unit
+        self.screen.blit(self.towerFloors[self.activeFloorMenu].defender.icon, (1045, 647) )
+
+        #wypisywanie zawartosci menu - przyciski/grafiki
+
+        self.buttons[5] = Button(995, 628, "UPGRADEFLOORLEVEL")
+        #upgradeTowerFloorButton.displayImage(self.screen, False)
+
+        self.buttons[6] = Button(950, 685, "FIXTOWERFLOOR")
+        #fixButton.displayImage(self.screen, False)
+
+        self.buttons[7] = Button(1180, 647, "UPGRADEFLOORLEVEL")
+        self.buttons[8] = Button(1180, 667, "UPGRADEFLOORLEVEL")
+        self.buttons[9] = Button(1180, 687, "UPGRADEFLOORLEVEL")

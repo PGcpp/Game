@@ -17,15 +17,18 @@ class Defender():
 	ANGLE = 0
 
         image = None
+        icon = None
         interval = None #jak czesto moze strzelac
 	bullets = [] #typy pociskow ktorymi moze strzelac
 	xPos = None
 	yPos = None
 
+	name = None
+
 	chosenBulletType = 0 #aktualnie wybrany rodzaj pocisku
 	bulletsAmount = 0 #aktualna ilosc dostepnych pociskow
 
-	def __init__(self, world, xPos, yPos, interval):
+	def __init__(self, world, xPos, yPos, interval, image, name):
 		self.world = world
 		self.xPos = xPos
 		self.yPos = yPos
@@ -35,8 +38,13 @@ class Defender():
 		self.body = self.world.CreateStaticBody(position=(self.xPos, self.yPos), angle=self.ANGLE)
 		self.body.CreatePolygonFixture(box=(self.B2WIDTH, self.B2HEIGTH), density=self.DENSITY, friction=self.FRICTION) 
 
-		self.image = pygame.image.load(PARAMS.IMAGEPATH + BUTTONS.names["VIKING"])
-		self.image = self.image.convert()
+                self.name = name
+
+		self.image = pygame.image.load(image)
+		self.image = self.image.convert_alpha()
+
+		self.icon = pygame.image.load('resources/defenderIco_'+self.name.lower()+'.png')
+                self.icon = self.icon.convert_alpha()
 
 		self.body.userData = ["defender", self.image]
 

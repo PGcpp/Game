@@ -38,6 +38,9 @@ class BUTTONS:
         "FLOOR3": "floorButton.png",
         "FLOOR4": "floorButton.png",
         "CLOSEFLOORMENU": "closeFloorMenuButton.png",
+        #towerFloor menu
+        "UPGRADEFLOORLEVEL": "upgradeButton.png",
+        "FIXTOWERFLOOR": "fixTowerFloorButton.png",
         #defense scene
         "VIKING":"viking.png"
 	}
