@@ -55,7 +55,7 @@ class DefenseScene(Scene.Scene):
 	self.groundTexture = self.groundTexture.convert()
         self.ground.userData = ["ground"]
 
-        self.backgroundTexture = pygame.image.load("resources/gameBackground.png").convert()
+        self.backgroundTexture = pygame.image.load("resources/gameBackground1.png").convert()
 
         self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 100 )
         self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 100 )
@@ -70,6 +70,8 @@ class DefenseScene(Scene.Scene):
         self.clock = pygame.time.Clock()
 
         self.money = 10000
+
+        self.initialDraw()
 
     def step(self):
         print "FPS: " + str( self.clock.get_fps() )
@@ -141,8 +143,25 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
         if body.userData != None and (body.userData[0] == BULLET.NOT_HIT):    
             self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
+        #else:
+        #    pygame.draw.polygon(self.screen, colors[body.type], vertices)
+
+        #rysowanie floorMenu
+        if self.showFloorMenu:
+            self.doShowFloorMenu()
         else:
-            pygame.draw.polygon(self.screen, colors[body.type], vertices)
+            self.buttons[4] = None
+            self.buttons[5] = None
+            self.buttons[6] = None
+
+        for button in self.buttons:
+            if button != None:
+                button.displayImage(self.screen, False)
+
+    def initialDraw(self):
+
+        backgroundTexture2 = pygame.image.load("resources/gameBackground2.png").convert()
+        self.screen.blit(backgroundTexture2, ( 1034, 0 ) )
 
         #rysowanie tekstury wiezy
         for tF in self.towerFloors:
@@ -157,31 +176,22 @@ class DefenseScene(Scene.Scene):
         #rysowanie tekstury ground
         self.screen.blit( self.groundTexture, (0, 559) )
 
-        #rysowanie stanu kasy
-        moneyFont = pygame.font.SysFont("monospace", 25, True)
-        moneyLabel = moneyFont.render("Money:", 1, (255,255,0))
-        self.screen.blit(moneyLabel, (15, 10))
-
-        amountLabel = moneyFont.render(str(self.money), 1, (255,255,0))
-        self.screen.blit(amountLabel, (110, 10))
-
-        #rysowanie floorMenu
-        if self.showFloorMenu:
-            self.doShowFloorMenu()
-        else:
-            self.buttons[4] = None
-            self.buttons[5] = None
-            self.buttons[6] = None
-
         #rysowanie przyciskow
         self.buttons[0] = Button(1049, 486, "FLOOR1")
         self.buttons[1] = Button(1049, 406, "FLOOR2")
         self.buttons[2] = Button(1049, 322, "FLOOR3")
         self.buttons[3] = Button(1049, 238, "FLOOR4")
 
-        for button in self.buttons:
-            if button != None:
-                button.displayImage(self.screen, False)
+        self.showMoney()
+
+    def showMoney(self):
+        self.screen.blit( self.groundTexture, (0, 559) )
+        moneyFont = pygame.font.SysFont("monospace", 25, True)
+        moneyLabel = moneyFont.render("Money:", 1, (255,255,0))
+        self.screen.blit(moneyLabel, (15, 600))
+
+        amountLabel = moneyFont.render(str(self.money), 1, (255,255,0))
+        self.screen.blit(amountLabel, (110, 600))
 
     def dispose(self):
         for body in self.world.bodies:
@@ -260,12 +270,14 @@ class DefenseScene(Scene.Scene):
                                     self.activeFloorMenu = 3
                                 if button.name == "CLOSEFLOORMENU":
                                     self.showFloorMenu = False
+                                    self.showMoney()
                                     
                                 if button.name == "UPGRADEFLOORLEVEL":
                                     if self.money >= 7000 and self.towerFloors[self.activeFloorMenu].level < 1:
                                         self.towerFloors[self.activeFloorMenu].level += 1
                                         self.towerFloors[self.activeFloorMenu].hp = 100 * (self.towerFloors[self.activeFloorMenu].level + 1)
                                         self.money -= 7000
+                                        self.showMoney()
                                         
                                 if button.name == "FIXTOWERFLOOR":
                                     cost = (100 - self.towerFloors[self.activeFloorMenu].hp) * 5
@@ -273,6 +285,7 @@ class DefenseScene(Scene.Scene):
                                     if self.money >= cost and self.towerFloors[self.activeFloorMenu].hp < (100 * (self.towerFloors[self.activeFloorMenu].level + 1) ):
                                         self.towerFloors[self.activeFloorMenu].hp = (100 * (self.towerFloors[self.activeFloorMenu].level + 1) )
                                         self.money -= cost
+                                        self.showMoney()
 
     def doShowFloorMenu(self):
         #tlo menu
