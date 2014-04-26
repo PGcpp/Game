@@ -5,11 +5,28 @@ class STATE:
     SUSPEND = 4
 
 class MENU:
-    PLAY = 101
-    OPTIONS = 102
+    PLAY = 10
+    OPTIONS = 11
 
 class PARAMS:
     IMAGEPATH = "resources/"
+
+class VIKING:
+    #types
+    TYPE_1 = 20
+    TYPE_2 = 21
+    TYPE_3 = 22
+    #states
+    NOT_HIT = 23
+    HIT = 24
+
+class BULLET:
+    #types
+    STONE = 100
+    FIREBALL = 200
+    #states
+    NOT_HIT = 30
+    HIT = 31
 
 class BUTTONS:
     names = {
@@ -19,7 +36,7 @@ class BUTTONS:
 	"NEW_GAME": "playButton.png",
 	"OPTIONS": "settingsButton.png",
 	"EXIT": "exitButton.png",
-	#submenu
+    #submenu
         "MUSICMINUS": "settingsMinusButton.png",
         "MUSICPLUS": "settingsPlusButton.png",
         "FXMINUS": "settingsMinusButton.png",

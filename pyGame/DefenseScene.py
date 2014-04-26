@@ -75,7 +75,7 @@ class DefenseScene(Scene.Scene):
         print "FPS: " + str( self.clock.get_fps() )
         self.screen.blit( self.backgroundTexture, (0,0) )
         for body in self.world.bodies:
-            self.destroyViking(body)
+            self.destroyBody(body)
             for fixture in body.fixtures:
                 self.computeAndDraw(body, fixture)
 
@@ -83,8 +83,6 @@ class DefenseScene(Scene.Scene):
         self.world.ClearForces()
         pygame.display.flip()
         self.clock.tick(self.TARGET_FPS)
-
-        self.checkAndDestroyBullet()
 
         self.count += 1
         
@@ -100,60 +98,24 @@ class DefenseScene(Scene.Scene):
         for event in self.eventQueue:
             if event.type==KEYDOWN and event.key==K_ESCAPE:
                 self.inGameMenuLoop()
-
-            if event.type == pygame.MOUSEBUTTONUP:
-                        for button in self.buttons:
-                            if button != None:
-                                x, y = event.pos
-                                if button.isHit(x, y):
-
-                                    print button.name
-                        
-                                    if button.name == "FLOOR1":
-                                        self.showFloorMenu = True
-                                        self.activeFloorMenu = 0
-
-                                    if button.name == "FLOOR2":
-                                        self.showFloorMenu = True
-                                        self.activeFloorMenu = 1
-
-                                    if button.name == "FLOOR3":
-                                        self.showFloorMenu = True
-                                        self.activeFloorMenu = 2
-
-                                    if button.name == "FLOOR4":
-                                        self.showFloorMenu = True
-                                        self.activeFloorMenu = 3
-                                    if button.name == "CLOSEFLOORMENU":
-                                        self.showFloorMenu = False
-                                        
-                                    if button.name == "UPGRADEFLOORLEVEL":
-                                        if self.money >= 7000 and self.towerFloors[self.activeFloorMenu].level < 1:
-                                            self.towerFloors[self.activeFloorMenu].level += 1
-                                            self.towerFloors[self.activeFloorMenu].hp = 100 * (self.towerFloors[self.activeFloorMenu].level + 1)
-                                            self.money -= 7000
-                                            
-                                    if button.name == "FIXTOWERFLOOR":
-                                        cost = (100 - self.towerFloors[self.activeFloorMenu].hp) * 5
-
-                                        if self.money >= cost and self.towerFloors[self.activeFloorMenu].hp < (100 * (self.towerFloors[self.activeFloorMenu].level + 1) ):
-                                            self.towerFloors[self.activeFloorMenu].hp = (100 * (self.towerFloors[self.activeFloorMenu].level + 1) )
-                                            self.money -= cost
+            self.handleFloorMenu(event)
 
     def createViking(self):
-        VikingFactory(self.world, -2, 5)
+        VikingFactory(self.world, VIKING.TYPE_1, -2, 5)
 
-    def destroyViking(self, body):
-        if body.position[0] > 64:
+
+    def destroyBody(self, body):
+        if body.userData != None and body.userData[0] == BULLET.HIT:
+            self.world.DestroyBody(body)
+        if body.userData != None and body.userData[0] == VIKING.HIT:
             self.world.DestroyBody(body)
 
-    def checkAndDestroyBullet(self):
-        if self.world.contactListener.count > 0:
-            for body in self.world.contactListener.bodiesToDestroy:
-                if body != None:
-                    self.world.DestroyBody(body)
-            self.world.contactListener.bodiesToDestroy = [None, None, None, None, None, None, None, None, None, None]
-            self.world.contactListener.count = 0
+        if body.userData != None and body.userData[0] == VIKING.NOT_HIT:
+            if body.position[0] > 64:
+                self.world.DestroyBody(body)
+        if body.userData != None and body.userData[0] == BULLET.NOT_HIT:
+            if body.position[1] < 5.5:
+                self.world.DestroyBody(body)
 
     def mouseEvents(self, event):
         if event.type == pygame.KEYDOWN:
@@ -175,9 +137,9 @@ class DefenseScene(Scene.Scene):
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
         
-        if body.userData != None and body.userData[0] == "viking":
+        if body.userData != None and body.userData[0] == VIKING.NOT_HIT:
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
-        if body.userData != None and (body.userData[0] == "bullet" or body.userData[0] == "bulletShooted"):   
+        if body.userData != None and (body.userData[0] == BULLET.NOT_HIT):    
             self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
         else:
             pygame.draw.polygon(self.screen, colors[body.type], vertices)
@@ -271,6 +233,46 @@ class DefenseScene(Scene.Scene):
                                 inGameMenuActive = False
                                 self.state = STATE.STOPPED
                                 self.stop()
+
+    def handleFloorMenu(self, event):
+        if event.type == pygame.MOUSEBUTTONUP:
+                    for button in self.buttons:
+                        if button != None:
+                            x, y = event.pos
+                            if button.isHit(x, y):
+
+                                print button.name
+                    
+                                if button.name == "FLOOR1":
+                                    self.showFloorMenu = True
+                                    self.activeFloorMenu = 0
+
+                                if button.name == "FLOOR2":
+                                    self.showFloorMenu = True
+                                    self.activeFloorMenu = 1
+
+                                if button.name == "FLOOR3":
+                                    self.showFloorMenu = True
+                                    self.activeFloorMenu = 2
+
+                                if button.name == "FLOOR4":
+                                    self.showFloorMenu = True
+                                    self.activeFloorMenu = 3
+                                if button.name == "CLOSEFLOORMENU":
+                                    self.showFloorMenu = False
+                                    
+                                if button.name == "UPGRADEFLOORLEVEL":
+                                    if self.money >= 7000 and self.towerFloors[self.activeFloorMenu].level < 1:
+                                        self.towerFloors[self.activeFloorMenu].level += 1
+                                        self.towerFloors[self.activeFloorMenu].hp = 100 * (self.towerFloors[self.activeFloorMenu].level + 1)
+                                        self.money -= 7000
+                                        
+                                if button.name == "FIXTOWERFLOOR":
+                                    cost = (100 - self.towerFloors[self.activeFloorMenu].hp) * 5
+
+                                    if self.money >= cost and self.towerFloors[self.activeFloorMenu].hp < (100 * (self.towerFloors[self.activeFloorMenu].level + 1) ):
+                                        self.towerFloors[self.activeFloorMenu].hp = (100 * (self.towerFloors[self.activeFloorMenu].level + 1) )
+                                        self.money -= cost
 
     def doShowFloorMenu(self):
         #tlo menu

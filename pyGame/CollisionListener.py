@@ -1,10 +1,8 @@
 import Box2D
 from Box2D import *
+from Enum import *
 
 class CollisionListener(b2ContactListener):
-
-    bodiesToDestroy = [None, None, None, None, None, None, None, None, None, None]
-    count = 0
 
     def __init__(self):
         b2ContactListener.__init__(self)
@@ -14,16 +12,15 @@ class CollisionListener(b2ContactListener):
         userDataB = contact.fixtureB.body.userData
 
         if userDataA != None and userDataB != None:
-            if (userDataA[0] == "bulletShooted" and userDataB[0] == "ground") or (userDataA[0] == "ground" and userDataB[0] == "bulletShooted"):
-                if userDataA[0] == "bulletShooted":
-                    self.bodiesToDestroy[self.count] = contact.fixtureA.body
-                else:
-                    self.bodiesToDestroy[self.count] = contact.fixtureB.body
-                self.count += 1
-            elif (userDataA[0] == "bulletShooted" and userDataB[0] == "viking") or (userDataA[0] == "viking" and userDataB[0] == "bulletShooted"):
-                self.bodiesToDestroy[self.count] = contact.fixtureA.body
-                self.bodiesToDestroy[self.count + 1] = contact.fixtureB.body
-                self.count += 2
+            if (userDataA[0] == BULLET.NOT_HIT and userDataB[0] == VIKING.NOT_HIT):
+                contact.fixtureA.body.userData[0] = BULLET.HIT
+                contact.fixtureB.body.userData[0] = VIKING.HIT
+                contact.fixtureB.body.userData.append(userDataA[2])
+                
+            elif (userDataA[0] == VIKING.NOT_HIT and userDataB[0] == BULLET.NOT_HIT):
+                contact.fixtureA.body.userData[0] = VIKING.HIT
+                contact.fixtureB.body.userData[0] = BULLET.HIT
+                contact.fixtureA.body.userData.append(userDataB[2])
 
         userDataA = None
         userDataB = None

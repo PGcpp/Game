@@ -8,17 +8,15 @@ class Bullet():
 
 	body = None
 	
-	#parametry body:
 	B2HEIGTH = None
 	B2WIDTH = None
 	DENSITY = 1
 	FRICTION = 0.3
 	ANGLE = 0
 
-        #pozostale parametry:
-        image = None
-	speed = None #ile metrow w ciagu sekundy pokonuje
-	damage = None #ile procent zycia zabiera bez uwzglednienia zbroi
+	image = None
+	speed = None 
+	damage = None
 
 	def __init__(self, width, height, speed, damage, image):
                 self.B2WIDTH = width
