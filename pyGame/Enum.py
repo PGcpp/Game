@@ -19,6 +19,7 @@ class VIKING:
     #states
     NOT_HIT = 23
     HIT = 24
+    ATTACK = 25
 
 class BULLET:
     #types

@@ -11,7 +11,8 @@ class Viking():
 	image = None
 	
 	name = None
-	attack = None
+	attack = 60
+	damage = 100
 	health = None
 	speed = None
 	vikingId = 0

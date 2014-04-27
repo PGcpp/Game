@@ -104,11 +104,13 @@ class DefenseScene(Scene.Scene):
             self.handleFloorMenu(event)
 
     def deployVikings(self):
-        if self.count % 180 == 0:
+        if self.count % (self.TARGET_FPS * 3) == 0:
             self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, -2, 5)
             self.vikingId += 1
             if self.vikingId % 10 == 0:
                 self.vikingWave += 1
+            #print self.vikings[0].body.userData[0]
+        
 
 
     def manageBody(self, body):
@@ -117,6 +119,7 @@ class DefenseScene(Scene.Scene):
         elif body.userData != None and body.userData[0] == VIKING.HIT:
             viking = self.vikings[body.userData[2]]
             if (viking.health - viking.body.userData[3]) <= 0:
+
                 self.world.DestroyBody(viking.body)
                 del self.vikings[viking.vikingId]
             else:
@@ -128,9 +131,18 @@ class DefenseScene(Scene.Scene):
             if body.position[0] > 50:
                 viking = self.vikings[body.userData[2]]
                 viking.body.linearVelocity = vec2(0, 0)
+                viking.body.userData[0] = VIKING.ATTACK
         elif body.userData != None and body.userData[0] == BULLET.NOT_HIT:
             if body.position[1] < 5.5:
                 self.world.DestroyBody(body)
+
+        elif body.userData != None and body.userData[0] == VIKING.ATTACK:
+            viking = self.vikings[body.userData[2]]
+            viking.attack -= 1
+            if viking.attack == 0:
+                print "Viking #" + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to tower"
+                viking.attack = 60
+
 
     def mouseEvents(self, event):
         if event.type == pygame.KEYDOWN:
