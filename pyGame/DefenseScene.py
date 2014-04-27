@@ -1,8 +1,7 @@
 import pygame
 from pygame.locals import *
 from Button import *
-import VikingFactory
-from VikingFactory import *
+from Viking import *
 import Bullet
 from Defender import *
 import CollisionListener
@@ -44,6 +43,10 @@ class DefenseScene(Scene.Scene):
 
     money = None
 
+    vikingId = 0
+    vikings = {}
+    vikingWave = 1
+
     def DefenseScene(screen):
         self.screen = screen
 
@@ -74,10 +77,10 @@ class DefenseScene(Scene.Scene):
         self.initialDraw()
 
     def step(self):
-        print "FPS: " + str( self.clock.get_fps() )
+        #print "FPS: " + str( self.clock.get_fps() )
         self.screen.blit( self.backgroundTexture, (0,0) )
         for body in self.world.bodies:
-            self.destroyBody(body)
+            self.manageBody(body)
             for fixture in body.fixtures:
                 self.computeAndDraw(body, fixture)
 
@@ -87,35 +90,45 @@ class DefenseScene(Scene.Scene):
         self.clock.tick(self.TARGET_FPS)
 
         self.count += 1
+        self.deployVikings()
         
         for t in self.towerFloors:
             if t.defender.interval > 0:
                 if self.count % t.defender.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
                     t.defender.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
 
-        if self.count > self.TARGET_FPS * 5:
-            self.count = 0
-            self.createViking()
 
         for event in self.eventQueue:
             if event.type==KEYDOWN and event.key==K_ESCAPE:
                 self.inGameMenuLoop()
             self.handleFloorMenu(event)
 
-    def createViking(self):
-        VikingFactory(self.world, VIKING.TYPE_1, -2, 5)
+    def deployVikings(self):
+        if self.count % 180 == 0:
+            self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, -2, 5)
+            self.vikingId += 1
+            if self.vikingId % 10 == 0:
+                self.vikingWave += 1
 
 
-    def destroyBody(self, body):
+    def manageBody(self, body):
         if body.userData != None and body.userData[0] == BULLET.HIT:
             self.world.DestroyBody(body)
-        if body.userData != None and body.userData[0] == VIKING.HIT:
-            self.world.DestroyBody(body)
+        elif body.userData != None and body.userData[0] == VIKING.HIT:
+            viking = self.vikings[body.userData[2]]
+            if (viking.health - viking.body.userData[3]) <= 0:
+                self.world.DestroyBody(viking.body)
+                del self.vikings[viking.vikingId]
+            else:
+                viking.body.userData[0] = VIKING.NOT_HIT
+                viking.health = viking.health - viking.body.userData[3]
+                viking.body.userData[3] = None
 
-        if body.userData != None and body.userData[0] == VIKING.NOT_HIT:
-            if body.position[0] > 64:
-                self.world.DestroyBody(body)
-        if body.userData != None and body.userData[0] == BULLET.NOT_HIT:
+        elif body.userData != None and body.userData[0] == VIKING.NOT_HIT:
+            if body.position[0] > 50:
+                viking = self.vikings[body.userData[2]]
+                viking.body.linearVelocity = vec2(0, 0)
+        elif body.userData != None and body.userData[0] == BULLET.NOT_HIT:
             if body.position[1] < 5.5:
                 self.world.DestroyBody(body)
 
