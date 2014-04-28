@@ -7,6 +7,7 @@ from Defender import *
 import CollisionListener
 from CollisionListener import *
 from TowerFloor import *
+from random import uniform
 
 import math
 import Scene
@@ -24,6 +25,9 @@ class DefenseScene(Scene.Scene):
     POSITION_ITERATIONS=10
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT=600
+    INTERVAL1 = 10
+    INTERVAL2 = 15
+    INTERVAL3 = 20
 
     world = None
     ground = None
@@ -62,7 +66,7 @@ class DefenseScene(Scene.Scene):
         
         self.ground = self.world.CreateStaticBody(position=(0,-2), shapes=polygonShape(box=(64,4)))
         self.groundTexture = pygame.image.load("resources/ground.png")
-	self.groundTexture = self.groundTexture.convert()
+        self.groundTexture = self.groundTexture.convert()
         self.ground.userData = ["ground"]
 
         self.backgroundTexture = pygame.image.load("resources/gameBackground1.png").convert()
@@ -110,7 +114,6 @@ class DefenseScene(Scene.Scene):
         self.world.ClearForces()
         pygame.display.flip()
         self.clock.tick(self.TARGET_FPS)
-
         self.count += 1
         self.deployVikings()
         
@@ -125,25 +128,24 @@ class DefenseScene(Scene.Scene):
             self.handleFloorMenu(event)
 
     def deployVikings(self):
-        if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * 1) == 0:
-            self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, -2, 5)
-            self.vikingId += 1
-            self.vikingCount += 1
+        if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * self.INTERVAL1) == 0:
+            for i in range(5 + self.vikingWave):
+                self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, uniform(-20, 0), 5)
+                self.vikingId += 1
+                self.vikingCount += 1
             if self.vikingCount % 10 == 0:
                 self.vikingWave += 1
         if self.vikingWave >= 2:
-            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * 5) == 0:
-                self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, -2, 5)
-                self.vikingId += 1
+            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * self.INTERVAL2) == 0:
+                for i in range(1 + self.vikingWave):
+                    self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, uniform(-10, 0), 5)
+                    self.vikingId += 1
         if self.vikingWave >= 4:
-            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * 10) == 0:
-                self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, -2, 5)
-                self.vikingId += 1
+            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * self.INTERVAL3) == 0:
+                for i in range(1 + self.vikingWave):
+                    self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, uniform(-10, 0), 5)
+                    self.vikingId += 1
             
-            #print self.vikings[0].body.userData[0]
-        
-
-
     def manageBody(self, body):
         if body.userData != None and body.userData[0] == BULLET.HIT:
             self.world.DestroyBody(body)
@@ -168,10 +170,10 @@ class DefenseScene(Scene.Scene):
 
         elif body.userData != None and body.userData[0] == VIKING.ATTACK:
             viking = self.vikings[body.userData[2]]
-            viking.attack -= 1
-            if viking.attack == 0:
+            viking.attackInterval -= 1
+            if viking.attackInterval == 0:
                 print "Viking " + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to tower"
-                viking.attack = 60
+                viking.attackInterval = 60
 
     def killViking(self, viking):
         self.world.DestroyBody(viking.body)
@@ -208,9 +210,9 @@ class DefenseScene(Scene.Scene):
         vertices=[(body.transform * v) * self.PPM for v in fixture.shape.vertices]
         vertices=[(v[0], self.SCREEN_HEIGHT - v[1]) for v in vertices]
         
-        if body.userData != None and body.userData[0] == VIKING.NOT_HIT:
+        if body.userData != None and (body.userData[0] == VIKING.NOT_HIT or body.userData[0] == VIKING.ATTACK):
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
-        if body.userData != None and (body.userData[0] == BULLET.NOT_HIT):    
+        if body.userData != None and body.userData[0] == BULLET.NOT_HIT:    
             self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
         #else:
         #    pygame.draw.polygon(self.screen, colors[body.type], vertices)

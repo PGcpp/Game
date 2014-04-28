@@ -81,3 +81,9 @@ class COSTS:
         "CANNON": 1900,
         "WIZARD": 3000
         }
+
+class CATEGORY:
+    GROUND = 0x0001
+    VIKING = 0x0002
+    BULLET = 0x0003
+    TOWER = 0x0004

@@ -11,7 +11,7 @@ class Viking():
 	image = None
 	
 	name = None
-	attack = 60
+	attackInterval = 60
 	damage = 100
 	health = None
 	speed = None
@@ -28,8 +28,7 @@ class Viking():
 		self.world = world
 
 		self.body = self.world.CreateDynamicBody(position=(xPos, yPos), angle=self.ANGLE)
-		self.body.CreatePolygonFixture(box=(self.B2WIDTH, self.B2HEIGTH), density=self.DENSITY, friction=self.FRICTION)
-		#self.body.fixtures[0].sensor = True
+		self.body.CreatePolygonFixture(box=(self.B2WIDTH, self.B2HEIGTH), density=self.DENSITY, friction=self.FRICTION, categoryBits=CATEGORY.VIKING, maskBits=CATEGORY.GROUND)
 		self.name = name
 		self.vikingId = vikingId
 		self.setInitParameters()
@@ -39,21 +38,24 @@ class Viking():
 	def setInitParameters(self):
 
 		if self.name == VIKING.TYPE_1:
-			self.attack = 100
+			self.attackInterval = 60
+			self.damage = 100
 			self.health = 100
 			self.speed = 5
 			self.money = 100
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking1.png")
 
 		if self.name == VIKING.TYPE_2:
-			self.attack = 200
+			self.attackInterval = 60
+			self.damage = 200
 			self.health = 200
 			self.speed = 7
 			self.money = 200
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking2.png")
 
 		if self.name == VIKING.TYPE_3:
-			self.attack = 400
+			self.attackInterval = 60
+			self.damage = 400
 			self.health = 400
 			self.speed = 3
 			self.money = 400
