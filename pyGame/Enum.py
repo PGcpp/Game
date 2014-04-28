@@ -31,13 +31,13 @@ class BULLET:
 
 class BUTTONS:
     names = {
-	#generic buttom
+	#generic button
 	"DEFAULT": "playButton.png",
 	#main menu
 	"NEW_GAME": "playButton.png",
 	"OPTIONS": "settingsButton.png",
 	"EXIT": "exitButton.png",
-    #submenu
+        #submenu
         "MUSICMINUS": "settingsMinusButton.png",
         "MUSICPLUS": "settingsPlusButton.png",
         "FXMINUS": "settingsMinusButton.png",
@@ -47,6 +47,8 @@ class BUTTONS:
         "DIFFICULTYHARD": "difficultyHardButton.png",
         "EXITSETTINGS": "exitSettingsButton.png",
         "SAVESETTINGS": "saveSettingsButton.png",
+        #game
+        "SHOWMENU": "showMenuButton.png",
         #ingame menu
         "RESUMEGAME": "resumeGameButton.png",
         "QUITGAME": "quitGameButton.png",
@@ -59,8 +61,21 @@ class BUTTONS:
         #towerFloor menu
         "UPGRADEFLOORLEVEL": "upgradeButton.png",
         "FIXTOWERFLOOR": "fixTowerFloorButton.png",
+        "BUYDEFENDER": "buyButton.png",
+        "SELLDEFENDER": "sellButton.png",
+        #floorMenu store
+        "CLOSEFLOORMENUSTORE": "closeFloorMenuButton.png",
         #defense scene
-        "VIKING1":"viking1.png",
-        "VIKING2":"viking2.png",
-        "VIKING3":"viking3.png"
+        "VIKING":"viking.png"
 	}
+
+class COSTS:
+    DEFENDER = {
+        "NONE": 0,
+        "SPEARMAN": 500,
+        "SLINGER": 700,
+        "ARCHER": 1000,
+        "CATAPULT": 1500,
+        "CANNON": 1900,
+        "WIZARD": 3000
+        }
