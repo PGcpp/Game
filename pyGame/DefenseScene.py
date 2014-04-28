@@ -165,7 +165,7 @@ class DefenseScene(Scene.Scene):
                 viking.body.userData[0] = VIKING.ATTACK
                 
         elif body.userData != None and body.userData[0] == BULLET.NOT_HIT:
-            if body.position[1] < 3.0:
+            if body.position[1] < 3.2:
                 self.world.DestroyBody(body)
 
         elif body.userData != None and body.userData[0] == VIKING.ATTACK:
@@ -214,7 +214,7 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
         if body.userData != None and body.userData[0] == BULLET.NOT_HIT:    
             self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
-        #else:
+        #else
         #    pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
         #rysowanie floorMenu
@@ -263,6 +263,7 @@ class DefenseScene(Scene.Scene):
         self.showMoney()
 
     def showMoney(self):
+        print "rusyje"
         self.screen.blit( self.groundTexture, (0, 559) )
         moneyFont = pygame.font.SysFont("monospace", 25, True)
         moneyLabel = moneyFont.render("Money:", 1, (255,255,0))
@@ -271,6 +272,11 @@ class DefenseScene(Scene.Scene):
         amountLabel = moneyFont.render(str(self.money), 1, (255,255,0))
         self.screen.blit(amountLabel, (110, 600))
 
+        if self.showFloorMenu:
+            self.refreshFloorMenu = True
+        if self.showFloorMenuStore:
+            self.refreshFloorMenuStore = True
+            
     def dispose(self):
         for body in self.world.bodies:
             self.world.DestroyBody(body)
@@ -337,21 +343,29 @@ class DefenseScene(Scene.Scene):
                                 if button.name == "FLOOR1":
                                     self.showFloorMenu = True
                                     self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
                                     self.activeFloorMenu = 0
 
                                 if button.name == "FLOOR2":
                                     self.showFloorMenu = True
                                     self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
                                     self.activeFloorMenu = 1
 
                                 if button.name == "FLOOR3":
                                     self.showFloorMenu = True
                                     self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
                                     self.activeFloorMenu = 2
 
                                 if button.name == "FLOOR4":
                                     self.showFloorMenu = True
                                     self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
                                     self.activeFloorMenu = 3
                                     
                                 if button.name == "CLOSEFLOORMENU":
@@ -397,9 +411,9 @@ class DefenseScene(Scene.Scene):
 
         if self.refreshFloorMenu:
 
-            self.refreshFloorMenu = False
-
             self.showMoney() #to nam od razu czysci stare menu
+
+            self.refreshFloorMenu = False
             
             #tlo menu
             self.screen.blit(self.floorMenuTexture, (940, 590))
@@ -427,6 +441,10 @@ class DefenseScene(Scene.Scene):
             ReloadLabel = floorMenuFont.render("RELOAD:", 1, (0,0,0))
             SpeedLabel = floorMenuFont.render(" SPEED:", 1, (0,0,0))
 
+            AttackValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.bullets[ self.towerFloors[self.activeFloorMenu].defender.chosenBulletType ].damage) ), 1, (0,0,0))
+            ReloadValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.interval) ), 1, (0,0,0))
+            SpeedValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.bullets[ self.towerFloors[self.activeFloorMenu].defender.chosenBulletType ].speed) ), 1, (0,0,0))
+
             self.screen.blit(LevelLabel, (950, 630))
             self.screen.blit(LevelValue, (980, 630))
             self.screen.blit(UpgradeLevelValue, (980, 645))
@@ -439,6 +457,10 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(ReloadLabel, (1105, 670))
             self.screen.blit(SpeedLabel,  (1105, 690))
 
+            self.screen.blit(AttackValue, (1160, 650))
+            self.screen.blit(ReloadValue, (1160, 670))
+            self.screen.blit(SpeedValue,  (1160, 690))
+
             #unit
             self.screen.blit(self.towerFloors[self.activeFloorMenu].defender.icon, (1045, 640) )
 
@@ -450,9 +472,9 @@ class DefenseScene(Scene.Scene):
             self.buttons[7] = Button(950, 685, "FIXTOWERFLOOR")
             #fixButton.displayImage(self.screen, False)
 
-            self.buttons[8] = Button(1180, 647, "UPGRADEFLOORLEVEL")
-            self.buttons[9] = Button(1180, 667, "UPGRADEFLOORLEVEL")
-            self.buttons[10] = Button(1180, 687, "UPGRADEFLOORLEVEL")
+            self.buttons[8] = Button(1190, 647, "UPGRADEFLOORLEVEL")
+            self.buttons[9] = Button(1190, 667, "UPGRADEFLOORLEVEL")
+            self.buttons[10] = Button(1190, 687, "UPGRADEFLOORLEVEL")
 
             if self.towerFloors[self.activeFloorMenu].defender.name == "NONE":
                 self.buttons[11] = Button(1049, 690 ,"BUYDEFENDER")
@@ -464,10 +486,10 @@ class DefenseScene(Scene.Scene):
     def doShowFloorMenuStore(self):
 
         if self.refreshFloorMenuStore:
-            
-            self.refreshFloorMenuStore = False
 
             self.showMoney() #to nam od razu czysci stare menu
+            
+            self.refreshFloorMenuStore = False
             
             #tlo menu
             self.screen.blit(self.floorMenuStoreTexture, (855, 590))

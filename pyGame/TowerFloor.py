@@ -41,29 +41,9 @@ class TowerFloor():
                 y = 36.0 - self.yPos - self.image[self.level].get_size()[1]/20.0 - 4.2 #4.2 dobrane na pale zeby pasowalo
 
                 print "X: ",x,"   Y: ",y
-                
-                if defenderName == "NONE":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_none.png', "NONE")
-                        self.defender.addBullet(1, 1, 5, 10, 'resources/bullet1.png')
-                elif defenderName == "SPEARMAN":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_spearman.png', "SPEARMAN")
-                        self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
-                elif defenderName == "SLINGER":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_slinger.png', "SLINGER")
-                        self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
-                elif defenderName == "ARCHER":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_archer.png', "ARCHER")
-                        self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
-                elif defenderName == "CATAPULT":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_catapult.png', "CATAPULT")
-                        self.defender.addBullet(1, 1, 60.0, 90, 'resources/bullet1.png')
-                elif defenderName == "CANNON":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_cannon.png', "CANNON")
-                        self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
-                elif defenderName == "WIZARD":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_wizard.png', "WIZARD")
-                        self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
 
+                self.defender = Defender( self.world, x, y, SKILLS.INTERVAL[ defenderName ] , 'resources/defender_'+defenderName.lower()+'.png', defenderName )
+                self.defender.addBullet(1, 1, SKILLS.SPEED[ defenderName ], SKILLS.DAMAGE[ defenderName ], 'resources/bullet1.png')
 
                 
                 

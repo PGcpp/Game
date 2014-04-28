@@ -87,3 +87,32 @@ class CATEGORY:
     VIKING = 0x0002
     BULLET = 0x0003
     TOWER = 0x0004
+
+class SKILLS:
+    DAMAGE = {
+        "NONE": 0.0,
+        "SPEARMAN": 75.0,
+        "SLINGER": 30.0,
+        "ARCHER": 40.0,
+        "CATAPULT": 50.0,
+        "CANNON": 75.0,
+        "WIZARD": 100.0
+        }
+    SPEED = {
+        "NONE": 0.0,
+        "SPEARMAN": 75.0,
+        "SLINGER": 30.0,
+        "ARCHER": 40.0,
+        "CATAPULT": 45.0,
+        "CANNON": 75.0,
+        "WIZARD": 100.0
+        }
+    INTERVAL = {
+        "NONE": -1.0,
+        "SPEARMAN": 120.0,
+        "SLINGER": 140.0,
+        "ARCHER": 100.0,
+        "CATAPULT": 180.0,
+        "CANNON": 240.0,
+        "WIZARD": 60.0
+        }

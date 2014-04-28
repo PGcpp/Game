@@ -83,7 +83,7 @@ class Defender():
                         Vx = self.getXVelocity(time, distance)
 
                         #BUM!
-                        bulletBody.ApplyLinearImpulse( vec2( -Vx , Vy), (self.xPos - 1, self.yPos - 0.1), True ) # -Vx bo chcemy strzelac z prawej strony w lewa [wieze mamy po prawej przeciwnicy z lewej]
+                        bulletBody.ApplyLinearImpulse( vec2( -Vx , Vy), (self.xPos - 1, self.yPos), True ) # -Vx bo chcemy strzelac z prawej strony w lewa [wieze mamy po prawej przeciwnicy z lewej]
                                                                                                            # a self.xPos - 1 bo pocisk utworzony w self.xPos - 1, chcemy przylozyc sile w jego srodku
                         #pocisk wystrzelony modyfikacja userData
                         #bulletBody.userData[0] = "bulletShooted"
