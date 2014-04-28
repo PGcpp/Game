@@ -15,12 +15,12 @@ class CollisionListener(b2ContactListener):
             if (userDataA[0] == BULLET.NOT_HIT and userDataB[0] == VIKING.NOT_HIT):
                 contact.fixtureA.body.userData[0] = BULLET.HIT
                 contact.fixtureB.body.userData[0] = VIKING.HIT
-                contact.fixtureB.body.userData.append(userDataA[3])
+                contact.fixtureB.body.userData[3] = userDataA[2]
                 
             elif (userDataA[0] == VIKING.NOT_HIT and userDataB[0] == BULLET.NOT_HIT):
                 contact.fixtureA.body.userData[0] = VIKING.HIT
                 contact.fixtureB.body.userData[0] = BULLET.HIT
-                contact.fixtureA.body.userData.append(userDataB[3])
+                contact.fixtureA.body.userData[3] = userDataB[2]
 
     def bulletMiss(self, userDataA, userDataB):
         pass        

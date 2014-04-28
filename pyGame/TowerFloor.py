@@ -55,8 +55,8 @@ class TowerFloor():
                         self.defender = Defender( self.world, x, y, -1, 'resources/defender_archer.png', "ARCHER")
                         self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
                 elif defenderName == "CATAPULT":
-                        self.defender = Defender( self.world, x, y, -1, 'resources/defender_catapult.png', "CATAPULT")
-                        self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')
+                        self.defender = Defender( self.world, x, y, 180, 'resources/defender_catapult.png', "CATAPULT")
+                        self.defender.addBullet(1, 1, 60.0, 90, 'resources/bullet1.png')
                 elif defenderName == "CANNON":
                         self.defender = Defender( self.world, x, y, -1, 'resources/defender_cannon.png', "CANNON")
                         self.defender.addBullet(1, 1, 30, 10, 'resources/bullet1.png')

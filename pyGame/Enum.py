@@ -66,7 +66,9 @@ class BUTTONS:
         #floorMenu store
         "CLOSEFLOORMENUSTORE": "closeFloorMenuButton.png",
         #defense scene
-        "VIKING":"viking.png"
+        "VIKING1":"viking1.png",
+        "VIKING2":"viking2.png",
+        "VIKING3":"viking3.png"
 	}
 
 class COSTS:

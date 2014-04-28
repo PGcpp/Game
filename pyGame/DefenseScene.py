@@ -51,7 +51,8 @@ class DefenseScene(Scene.Scene):
 
     vikingId = 0
     vikings = {}
-    vikingWave = 1
+    vikingCount = 0
+    vikingWave = 0
 
     def DefenseScene(screen):
         self.screen = screen
@@ -124,11 +125,21 @@ class DefenseScene(Scene.Scene):
             self.handleFloorMenu(event)
 
     def deployVikings(self):
-        if self.count % (self.TARGET_FPS * 3) == 0:
+        if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * 1) == 0:
             self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, -2, 5)
             self.vikingId += 1
-            if self.vikingId % 10 == 0:
+            self.vikingCount += 1
+            if self.vikingCount % 10 == 0:
                 self.vikingWave += 1
+        if self.vikingWave >= 2:
+            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * 5) == 0:
+                self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, -2, 5)
+                self.vikingId += 1
+        if self.vikingWave >= 4:
+            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * 10) == 0:
+                self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, -2, 5)
+                self.vikingId += 1
+            
             #print self.vikings[0].body.userData[0]
         
 
@@ -139,9 +150,7 @@ class DefenseScene(Scene.Scene):
         elif body.userData != None and body.userData[0] == VIKING.HIT:
             viking = self.vikings[body.userData[2]]
             if (viking.health - viking.body.userData[3]) <= 0:
-
-                self.world.DestroyBody(viking.body)
-                del self.vikings[viking.vikingId]
+                self.killViking(viking)
             else:
                 viking.body.userData[0] = VIKING.NOT_HIT
                 viking.health = viking.health - viking.body.userData[3]
@@ -152,16 +161,31 @@ class DefenseScene(Scene.Scene):
                 viking = self.vikings[body.userData[2]]
                 viking.body.linearVelocity = vec2(0, 0)
                 viking.body.userData[0] = VIKING.ATTACK
+                
         elif body.userData != None and body.userData[0] == BULLET.NOT_HIT:
-            if body.position[1] < 5.5:
+            if body.position[1] < 3.0:
                 self.world.DestroyBody(body)
 
         elif body.userData != None and body.userData[0] == VIKING.ATTACK:
             viking = self.vikings[body.userData[2]]
             viking.attack -= 1
             if viking.attack == 0:
-                print "Viking #" + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to tower"
+                print "Viking " + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to tower"
                 viking.attack = 60
+
+    def killViking(self, viking):
+        self.world.DestroyBody(viking.body)
+        if viking.name == VIKING.TYPE_1:
+            self.money += viking.money
+            self.showMoney()
+        elif viking.name == VIKING.TYPE_2:
+            self.money += viking.money
+            self.showMoney()
+        else:
+            self.money += viking.money
+            self.showMoney() 
+        del self.vikings[viking.vikingId]
+        viking = None
 
 
     def mouseEvents(self, event):
