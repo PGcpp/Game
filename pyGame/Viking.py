@@ -17,6 +17,7 @@ class Viking():
 	speed = None
 	vikingId = 0
 	money = 100
+	targeted = False
 
 	B2HEIGTH = 2
 	B2WIDTH = 1
@@ -63,3 +64,6 @@ class Viking():
 
 		self.body.linearVelocity = vec2(self.speed, 0)
 		self.image = self.image.convert()
+
+	def getPosition(self):
+		return self.body.position[0]
