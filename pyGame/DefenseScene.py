@@ -32,6 +32,8 @@ class DefenseScene(Scene.Scene):
     world = None
     ground = None
     groundTexture = None
+    groundTextureLeft = None
+    groundTextureRight = None
     count = 0
 
     showFloorMenu = False
@@ -67,6 +69,10 @@ class DefenseScene(Scene.Scene):
         self.ground = self.world.CreateStaticBody(position=(0,-2), shapes=polygonShape(box=(64,4)))
         self.groundTexture = pygame.image.load("resources/ground.png")
         self.groundTexture = self.groundTexture.convert()
+        self.groundTextureLeft = pygame.image.load("resources/ground_left.png")
+        self.groundTextureLeft = self.groundTextureLeft.convert()
+        self.groundTextureRight = pygame.image.load("resources/ground_right.png")
+        self.groundTextureRight = self.groundTextureRight.convert()
         self.ground.userData = ["ground"]
 
         self.backgroundTexture = pygame.image.load("resources/gameBackground1.png").convert()
@@ -92,7 +98,7 @@ class DefenseScene(Scene.Scene):
         self.initialDraw()
 
     def step(self):
-        #print "FPS: " + str( self.clock.get_fps() )
+        print "FPS: " + str( self.clock.get_fps() )
         
         self.screen.blit( self.backgroundTexture, (0,0) )
 
@@ -263,8 +269,8 @@ class DefenseScene(Scene.Scene):
         self.showMoney()
 
     def showMoney(self):
-        print "rusyje"
-        self.screen.blit( self.groundTexture, (0, 559) )
+        print "rysuje"
+        self.screen.blit( self.groundTextureLeft, (0, 559) )
         moneyFont = pygame.font.SysFont("monospace", 25, True)
         moneyLabel = moneyFont.render("Money:", 1, (255,255,0))
         self.screen.blit(moneyLabel, (15, 600))
@@ -371,7 +377,8 @@ class DefenseScene(Scene.Scene):
                                 if button.name == "CLOSEFLOORMENU":
                                     self.showFloorMenu = False
                                     self.refreshFloorMenu = True
-                                    self.showMoney()
+
+                                    self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
                                     
                                 if button.name == "UPGRADEFLOORLEVEL":
                                     if self.money >= 7000 and self.towerFloors[self.activeFloorMenu].level < 1:
@@ -380,6 +387,24 @@ class DefenseScene(Scene.Scene):
                                         self.money -= 7000
 
                                         self.refreshFloorMenu = True
+
+                                if button.name == "UPGRADEDEFENDERDAMAGE":
+                                    self.towerFloors[self.activeFloorMenu].defender.upgradeDamage()
+                                    self.money -= COSTS.DEFENDERUPGRADE.ATTACK
+
+                                    self.showMoney()
+
+                                if button.name == "UPGRADEDEFENDERINTERVAL":
+                                    self.towerFloors[self.activeFloorMenu].defender.upgradeInterval()
+                                    self.money -= COSTS.DEFENDERUPGRADE.RELOAD
+
+                                    self.showMoney()
+
+                                if button.name == "UPGRADEDEFENDERSPEED":
+                                    self.towerFloors[self.activeFloorMenu].defender.upgradeSpeed()
+                                    self.money -= COSTS.DEFENDERUPGRADE.SPEED
+
+                                    self.showMoney()
                                         
                                 if button.name == "FIXTOWERFLOOR":
                                     cost = (100 - self.towerFloors[self.activeFloorMenu].hp) * 5
@@ -389,6 +414,8 @@ class DefenseScene(Scene.Scene):
                                         self.money -= cost
 
                                         self.refreshFloorMenu = True
+
+                                        self.showMoney()
 
                                 if button.name == "BUYDEFENDER":
                                     self.showFloorMenu = False
@@ -401,6 +428,74 @@ class DefenseScene(Scene.Scene):
                                     self.towerFloors[self.activeFloorMenu].setDefender("NONE")
                                     self.refreshFloorMenu = True
 
+                                    self.showMoney()
+
+                                if button.name == "BUYSPEARMAN":
+                                    self.towerFloors[self.activeFloorMenu].setDefender("SPEARMAN")
+                                    self.money -= COSTS.DEFENDER[ "SPEARMAN" ]
+                                    
+                                    self.showFloorMenu = True
+                                    self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
+
+                                    self.showMoney()
+
+                                if button.name == "BUYSLINGER":
+                                    self.towerFloors[self.activeFloorMenu].setDefender("SLINGER")
+                                    self.money -= COSTS.DEFENDER[ "SLINGER" ]
+                                    
+                                    self.showFloorMenu = True
+                                    self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
+
+                                    self.showMoney()
+
+                                if button.name == "BUYARCHER":
+                                    self.towerFloors[self.activeFloorMenu].setDefender("ARCHER")
+                                    self.money -= COSTS.DEFENDER[ "ARCHER" ]
+                                    
+                                    self.showFloorMenu = True
+                                    self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
+
+                                    self.showMoney()
+
+                                if button.name == "BUYCATAPULT":
+                                    self.towerFloors[self.activeFloorMenu].setDefender("CATAPULT")
+                                    self.money -= COSTS.DEFENDER[ "CATAPULT" ]
+                                    
+                                    self.showFloorMenu = True
+                                    self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
+
+                                    self.showMoney()
+
+                                if button.name == "BUYCANNON":
+                                    self.towerFloors[self.activeFloorMenu].setDefender("CANNON")
+                                    self.money -= COSTS.DEFENDER[ "CANNON" ]
+                                    
+                                    self.showFloorMenu = True
+                                    self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
+
+                                    self.showMoney()
+
+                                if button.name == "BUYWIZARD":
+                                    self.towerFloors[self.activeFloorMenu].setDefender("WIZARD")
+                                    self.money -= COSTS.DEFENDER[ "WIZARD" ]
+                                    
+                                    self.showFloorMenu = True
+                                    self.refreshFloorMenu = True
+                                    self.showFloorMenuStore = False
+                                    self.refreshFloorMenuStore = True
+
+                                    self.showMoney()
+
                                 if button.name == "CLOSEFLOORMENUSTORE":
                                     self.showFloorMenu = True
                                     self.refreshFloorMenu = True
@@ -411,7 +506,7 @@ class DefenseScene(Scene.Scene):
 
         if self.refreshFloorMenu:
 
-            self.showMoney() #to nam od razu czysci stare menu
+            self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
 
             self.refreshFloorMenu = False
             
@@ -441,6 +536,10 @@ class DefenseScene(Scene.Scene):
             ReloadLabel = floorMenuFont.render("RELOAD:", 1, (0,0,0))
             SpeedLabel = floorMenuFont.render(" SPEED:", 1, (0,0,0))
 
+            AttackUpgradeValue = floorMenuFont.render(str( COSTS.DEFENDERUPGRADE.ATTACK ), 1, (100,100,0))
+            ReloadUpgradeValue = floorMenuFont.render(str( COSTS.DEFENDERUPGRADE.RELOAD ), 1, (100,100,0))
+            SpeedUpgradeValue = floorMenuFont.render(str( COSTS.DEFENDERUPGRADE.SPEED ), 1, (100,100,0))
+
             AttackValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.bullets[ self.towerFloors[self.activeFloorMenu].defender.chosenBulletType ].damage) ), 1, (0,0,0))
             ReloadValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.interval) ), 1, (0,0,0))
             SpeedValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.bullets[ self.towerFloors[self.activeFloorMenu].defender.chosenBulletType ].speed) ), 1, (0,0,0))
@@ -461,6 +560,10 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(ReloadValue, (1160, 670))
             self.screen.blit(SpeedValue,  (1160, 690))
 
+            self.screen.blit(AttackUpgradeValue, (1210, 650))
+            self.screen.blit(ReloadUpgradeValue, (1210, 670))
+            self.screen.blit(SpeedUpgradeValue,  (1210, 690))
+
             #unit
             self.screen.blit(self.towerFloors[self.activeFloorMenu].defender.icon, (1045, 640) )
 
@@ -472,9 +575,9 @@ class DefenseScene(Scene.Scene):
             self.buttons[7] = Button(950, 685, "FIXTOWERFLOOR")
             #fixButton.displayImage(self.screen, False)
 
-            self.buttons[8] = Button(1190, 647, "UPGRADEFLOORLEVEL")
-            self.buttons[9] = Button(1190, 667, "UPGRADEFLOORLEVEL")
-            self.buttons[10] = Button(1190, 687, "UPGRADEFLOORLEVEL")
+            self.buttons[8] = Button(1190, 647, "UPGRADEDEFENDERDAMAGE")
+            self.buttons[9] = Button(1190, 667, "UPGRADEDEFENDERINTERVAL")
+            self.buttons[10] = Button(1190, 687, "UPGRADEDEFENDERSPEED")
 
             if self.towerFloors[self.activeFloorMenu].defender.name == "NONE":
                 self.buttons[11] = Button(1049, 690 ,"BUYDEFENDER")
@@ -487,7 +590,7 @@ class DefenseScene(Scene.Scene):
 
         if self.refreshFloorMenuStore:
 
-            self.showMoney() #to nam od razu czysci stare menu
+            self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
             
             self.refreshFloorMenuStore = False
             
@@ -498,12 +601,12 @@ class DefenseScene(Scene.Scene):
             self.buttons[12] = Button(1200, 590, "CLOSEFLOORMENUSTORE")
 
             #ikony defenderow
-            self.screen.blit(pygame.image.load("resources/defenderIco_spearman.png").convert_alpha(), (870, 600) )
-            self.screen.blit(pygame.image.load("resources/defenderIco_slinger.png").convert_alpha(),  (930, 600) )
-            self.screen.blit(pygame.image.load("resources/defenderIco_archer.png").convert_alpha(),   (990, 600) )
-            self.screen.blit(pygame.image.load("resources/defenderIco_catapult.png").convert_alpha(), (1050, 600) )
-            self.screen.blit(pygame.image.load("resources/defenderIco_cannon.png").convert_alpha(),   (1110, 600) )
-            self.screen.blit(pygame.image.load("resources/defenderIco_wizard.png").convert_alpha(),   (1170, 600) )
+            self.screen.blit(pygame.image.load("resources/defenderIco_spearman.png").convert_alpha(), (870, 595) )
+            self.screen.blit(pygame.image.load("resources/defenderIco_slinger.png").convert_alpha(),  (930, 595) )
+            self.screen.blit(pygame.image.load("resources/defenderIco_archer.png").convert_alpha(),   (990, 595) )
+            self.screen.blit(pygame.image.load("resources/defenderIco_catapult.png").convert_alpha(), (1050, 595) )
+            self.screen.blit(pygame.image.load("resources/defenderIco_cannon.png").convert_alpha(),   (1110, 595) )
+            self.screen.blit(pygame.image.load("resources/defenderIco_wizard.png").convert_alpha(),   (1170, 595) )
 
             #podpisy defenderow
             floorMenuStoorFont = pygame.font.SysFont("monospace", 10, True)
@@ -514,20 +617,20 @@ class DefenseScene(Scene.Scene):
             storeCannonLabel = floorMenuStoorFont.render("CANNON", 1, (0,0,0))
             storeWizardLabel = floorMenuStoorFont.render("WIZARD", 1, (0,0,0))
 
-            self.screen.blit(storeSpearmanLabel, (863, 648))
-            self.screen.blit(storeSlingerLabel, (928, 648))
-            self.screen.blit(storeArcherLabel, (989, 648))
-            self.screen.blit(storeCatapultLabel, (1043, 648))
-            self.screen.blit(storeCannonLabel, (1110, 648))
-            self.screen.blit(storeWizardLabel, (1169, 648))
+            self.screen.blit(storeSpearmanLabel, (863, 643))
+            self.screen.blit(storeSlingerLabel, (928, 643))
+            self.screen.blit(storeArcherLabel, (989, 643))
+            self.screen.blit(storeCatapultLabel, (1043, 643))
+            self.screen.blit(storeCannonLabel, (1110, 643))
+            self.screen.blit(storeWizardLabel, (1169, 643))
 
             #przyciski buy
-            self.buttons[13] = Button(874, 680, "BUYDEFENDER")
-            self.buttons[14] = Button(934, 680, "BUYDEFENDER")
-            self.buttons[15] = Button(994, 680, "BUYDEFENDER")
-            self.buttons[16] = Button(1054, 680, "BUYDEFENDER")
-            self.buttons[17] = Button(1114, 680, "BUYDEFENDER")
-            self.buttons[18] = Button(1174, 680, "BUYDEFENDER")
+            self.buttons[13] = Button(874, 683, "BUYSPEARMAN")
+            self.buttons[14] = Button(934, 683, "BUYSLINGER")
+            self.buttons[15] = Button(994, 683, "BUYARCHER")
+            self.buttons[16] = Button(1054, 683, "BUYCATAPULT")
+            self.buttons[17] = Button(1114, 683, "BUYCANNON")
+            self.buttons[18] = Button(1174, 683, "BUYWIZARD")
 
             #koszty defenderow
             storeSpearmanLabel = floorMenuStoorFont.render(str( COSTS.DEFENDER[ "SPEARMAN" ] ), 1, (0,50,0))
@@ -537,11 +640,62 @@ class DefenseScene(Scene.Scene):
             storeCannonLabel = floorMenuStoorFont.render(str( COSTS.DEFENDER[ "CANNON" ] ), 1, (0,50,0))
             storeWizardLabel = floorMenuStoorFont.render(str( COSTS.DEFENDER[ "WIZARD" ] ), 1, (0,50,0))
 
-            self.screen.blit(storeSpearmanLabel, (879, 695))
-            self.screen.blit(storeSlingerLabel, (938, 695))
-            self.screen.blit(storeArcherLabel, (996, 695))
-            self.screen.blit(storeCatapultLabel, (1055, 695))
-            self.screen.blit(storeCannonLabel, (1116, 695))
-            self.screen.blit(storeWizardLabel, (1176, 695))
+            self.screen.blit(storeSpearmanLabel, (879, 698))
+            self.screen.blit(storeSlingerLabel, (938, 698))
+            self.screen.blit(storeArcherLabel, (996, 698))
+            self.screen.blit(storeCatapultLabel, (1055, 698))
+            self.screen.blit(storeCannonLabel, (1116, 698))
+            self.screen.blit(storeWizardLabel, (1176, 698))
+
+            #statsy defenderow
+            floorMenuStoorFontSmall = pygame.font.SysFont("monospace", 8, True)
+            
+            storeSpearmanAttackValue = floorMenuStoorFontSmall.render("A: " + str( int( SKILLS.DAMAGE[ "SPEARMAN" ] ) ), 1, (0,0,0))
+            storeSpearmanReloadValue = floorMenuStoorFontSmall.render("R: " + str( int( SKILLS.INTERVAL[ "SPEARMAN" ] ) ), 1, (0,0,0))
+            storeSpearmanSpeedValue = floorMenuStoorFontSmall.render("S: " + str( int( SKILLS.SPEED[ "SPEARMAN" ] ) ), 1, (0,0,0))
+            
+            storeSlingerAttackValue = floorMenuStoorFontSmall.render("A: " + str( int( SKILLS.DAMAGE[ "SLINGER" ] ) ), 1, (0,0,0))
+            storeSlingerReloadValue = floorMenuStoorFontSmall.render("R: " + str( int( SKILLS.INTERVAL[ "SLINGER" ] ) ), 1, (0,0,0))
+            storeSlingerSpeedValue = floorMenuStoorFontSmall.render("S: " + str( int( SKILLS.SPEED[ "SLINGER" ] ) ), 1, (0,0,0))
+            
+            storeArcherAttackValue = floorMenuStoorFontSmall.render("A: " + str( int( SKILLS.DAMAGE[ "ARCHER" ] ) ), 1, (0,0,0))
+            storeArcherReloadValue = floorMenuStoorFontSmall.render("R: " + str( int( SKILLS.INTERVAL[ "ARCHER" ] ) ), 1, (0,0,0))
+            storeArcherSpeedValue = floorMenuStoorFontSmall.render("S: " + str( int( SKILLS.SPEED[ "ARCHER" ] ) ), 1, (0,0,0))
+            
+            storeCatapultAttackValue = floorMenuStoorFontSmall.render("A: " + str( int( SKILLS.DAMAGE[ "CATAPULT" ] ) ), 1, (0,0,0))
+            storeCatapultReloadValue = floorMenuStoorFontSmall.render("R: " + str( int( SKILLS.INTERVAL[ "CATAPULT" ] ) ), 1, (0,0,0))
+            storeCatapultSpeedValue = floorMenuStoorFontSmall.render("S: " + str( int( SKILLS.SPEED[ "CATAPULT" ] ) ), 1, (0,0,0))
+            
+            storeCannonAttackValue = floorMenuStoorFontSmall.render("A: " + str( int( SKILLS.DAMAGE[ "CANNON" ] ) ), 1, (0,0,0))
+            storeCannonReloadValue = floorMenuStoorFontSmall.render("R: " + str( int( SKILLS.INTERVAL[ "CANNON" ] ) ), 1, (0,0,0))
+            storeCannonSpeedValue = floorMenuStoorFontSmall.render("S: " + str( int( SKILLS.SPEED[ "CANNON" ] ) ), 1, (0,0,0))
+            
+            storeWizardAttackValue = floorMenuStoorFontSmall.render("A: " + str( int( SKILLS.DAMAGE[ "WIZARD" ] ) ), 1, (0,0,0))
+            storeWizardReloadValue = floorMenuStoorFontSmall.render("R: " + str( int( SKILLS.INTERVAL[ "WIZARD" ] ) ), 1, (0,0,0))
+            storeWizardSpeedValue = floorMenuStoorFontSmall.render("S: " + str( int( SKILLS.SPEED[ "WIZARD" ] ) ), 1, (0,0,0))
+
+            self.screen.blit(storeSpearmanAttackValue, (870, 656))
+            self.screen.blit(storeSpearmanReloadValue, (870, 664))
+            self.screen.blit(storeSpearmanSpeedValue, (870, 672))
+
+            self.screen.blit(storeSlingerAttackValue, (930, 656))
+            self.screen.blit(storeSlingerReloadValue, (930, 664))
+            self.screen.blit(storeSlingerSpeedValue, (930, 672))
+
+            self.screen.blit(storeArcherAttackValue, (990, 656))
+            self.screen.blit(storeArcherReloadValue, (990, 664))
+            self.screen.blit(storeArcherSpeedValue, (990, 672))
+
+            self.screen.blit(storeCatapultAttackValue, (1050, 656))
+            self.screen.blit(storeCatapultReloadValue, (1050, 664))
+            self.screen.blit(storeCatapultSpeedValue, (1050, 672))
+
+            self.screen.blit(storeCannonAttackValue, (1110, 656))
+            self.screen.blit(storeCannonReloadValue, (1110, 664))
+            self.screen.blit(storeCannonSpeedValue, (1110, 672))
+
+            self.screen.blit(storeWizardAttackValue, (1170, 656))
+            self.screen.blit(storeWizardReloadValue, (1170, 664))
+            self.screen.blit(storeWizardSpeedValue, (1170, 672))
         
 

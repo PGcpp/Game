@@ -63,8 +63,17 @@ class BUTTONS:
         "FIXTOWERFLOOR": "fixTowerFloorButton.png",
         "BUYDEFENDER": "buyButton.png",
         "SELLDEFENDER": "sellButton.png",
+        "UPGRADEDEFENDERDAMAGE": "upgradeButton.png",
+        "UPGRADEDEFENDERINTERVAL": "upgradeButton.png",
+        "UPGRADEDEFENDERSPEED": "upgradeButton.png",
         #floorMenu store
         "CLOSEFLOORMENUSTORE": "closeFloorMenuButton.png",
+        "BUYSPEARMAN" : "buyButton.png",
+        "BUYSLINGER" : "buyButton.png",
+        "BUYARCHER" : "buyButton.png",
+        "BUYCATAPULT" : "buyButton.png",
+        "BUYCANNON" : "buyButton.png",
+        "BUYWIZARD" : "buyButton.png",
         #defense scene
         "VIKING1":"viking1.png",
         "VIKING2":"viking2.png",
@@ -81,6 +90,11 @@ class COSTS:
         "CANNON": 1900,
         "WIZARD": 3000
         }
+
+    class DEFENDERUPGRADE:
+        ATTACK = 500
+        RELOAD = 500
+        SPEED = 500
 
 class CATEGORY:
     GROUND = 0x0001

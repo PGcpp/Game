@@ -92,7 +92,16 @@ class Defender():
                 self.bullets.append( Bullet(width, height, speed, damage, image) )
                 self.bulletsAmount += 1
 
-        def dispose():
+        def upgradeDamage(self):
+                self.bullets[ self.chosenBulletType ].damage += 5
+
+        def upgradeSpeed(self):
+                self.bullets[ self.chosenBulletType ].speed += 5
+
+        def upgradeInterval(self):
+                self.interval -= 5
+
+        def dispose(self):
                 self.bullets = []
 
         
