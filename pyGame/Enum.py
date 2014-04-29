@@ -83,18 +83,23 @@ class BUTTONS:
 class COSTS:
     DEFENDER = {
         "NONE": 0,
-        "SPEARMAN": 500,
-        "SLINGER": 700,
-        "ARCHER": 1000,
-        "CATAPULT": 1500,
-        "CANNON": 1900,
-        "WIZARD": 3000
+        "SPEARMAN": 1000,
+        "SLINGER": 1500,
+        "ARCHER": 2000,
+        "CATAPULT": 4000,
+        "CANNON": 5000,
+        "WIZARD": 10000
         }
 
     class DEFENDERUPGRADE:
-        ATTACK = 500
+        DAMAGE = 500
         RELOAD = 500
         SPEED = 500
+
+        STEP = 500
+
+    class FLOOR:
+        UPGRADE = 10000
 
 class CATEGORY:
     GROUND = 0x0001
@@ -130,3 +135,31 @@ class SKILLS:
         "CANNON": 240.0,
         "WIZARD": 60.0
         }
+    MAXDISTANCE = {
+        "NONE": -1.0,
+        "SPEARMAN": 5.0,
+        "SLINGER": 30.0,
+        "ARCHER": 40.0,
+        "CATAPULT": 50.0,
+        "CANNON": 60.0,
+        "WIZARD": 70.0
+        }
+    
+    STEP = 5
+    MINVALUE = 35 #maxymalnie dwa strzaly na sekunde
+
+    class FLOOR:
+        MAXLEVEL = 1
+
+class BULLETSPRITE:
+    name = {
+        "NONE":  "resources/bullet_spearman.png",
+        "SPEARMAN": "resources/bullet_spearman.png",
+        "SLINGER":  "resources/bullet_slinger.png",
+        "ARCHER":  "resources/bullet_archer.png",
+        "CATAPULT":  "resources/bullet_catapult.png",
+        "CANNON":  "resources/bullet_cannon.png",
+        "WIZARD":  "resources/bullet_cannon.png"
+        }
+
+    

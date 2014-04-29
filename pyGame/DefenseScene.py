@@ -45,6 +45,8 @@ class DefenseScene(Scene.Scene):
     showFloorMenuStore = False
     refreshFloorMenuStore = True #czy nalezy odswiezyc FloorMenuStore (oraz grounda!)
 
+    chosenFloorTexture = None
+
     backgroundTexture = None
 
     towerFloors = [None, None, None, None]
@@ -80,35 +82,79 @@ class DefenseScene(Scene.Scene):
 
         self.floorMenuStoreTexture = pygame.image.load("resources/floorMenuStore.png").convert_alpha()
 
+        self.chosenFloorTexture = pygame.image.load('resources/chosenFloor.png').convert_alpha()
+
         self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 100 )
         self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 100 )
-        self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 50 )
+        self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 100 )
         self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 100 )
                 
-        self.towerFloors[0].setDefender("CATAPULT")
-        self.towerFloors[1].setDefender("NONE")
-        self.towerFloors[2].setDefender("ARCHER")
-        self.towerFloors[3].setDefender("SLINGER")
+        self.towerFloors[0].setDefender("ARCHER")
+        self.towerFloors[1].setDefender("CATAPULT")
+        self.towerFloors[2].setDefender("NONE")
+        self.towerFloors[3].setDefender("NONE")
 
         self.clock = pygame.time.Clock()
 
-        self.money = 10000
+        self.money = 1500
 
         self.initialDraw()
 
     def step(self):
-        print "FPS: " + str( self.clock.get_fps() )
+        #print "FPS: " + str( self.clock.get_fps() )
         
         self.screen.blit( self.backgroundTexture, (0,0) )
 
         #rysowanie tekstury wiezy
         for tF in self.towerFloors:
             self.screen.blit( tF.image[tF.level], (tF.xPos * 20, tF.yPos * 20) )
+
         #rysowanie defenderow
         self.screen.blit( self.towerFloors[0].defender.image, ( 1069, 486 ) )
         self.screen.blit( self.towerFloors[1].defender.image, ( 1069, 406 ) )
         self.screen.blit( self.towerFloors[2].defender.image, ( 1069, 322 ) )
         self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 238 ) )
+        
+        #rysowanie floorMenu
+        if self.showFloorMenu:
+
+            #rysowanie markera zaznaczonego defendera
+            if self.activeFloorMenu == 0:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 486 ) )
+            if self.activeFloorMenu == 1:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 406 ) )
+            if self.activeFloorMenu == 2:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 322 ) )
+            if self.activeFloorMenu == 3:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 238 ) )
+
+            #rysowanie menu    
+            self.doShowFloorMenu()
+            
+        else:
+            self.buttons[5] = None
+            self.buttons[6] = None
+            self.buttons[7] = None
+            self.buttons[8] = None
+            self.buttons[9] = None
+            self.buttons[10] = None
+            self.buttons[11] = None
+
+        #rysowanie floorMenuStore
+        if self.showFloorMenuStore:
+            self.doShowFloorMenuStore()
+        else:
+            self.buttons[12] = None
+            self.buttons[13] = None
+            self.buttons[14] = None
+            self.buttons[15] = None
+            self.buttons[16] = None
+            self.buttons[17] = None
+            self.buttons[18] = None
+
+        for button in self.buttons:
+            if button != None:
+                button.displayImage(self.screen, False)
 
         for body in self.world.bodies:
             self.manageBody(body)
@@ -125,7 +171,23 @@ class DefenseScene(Scene.Scene):
         for t in self.towerFloors:
             if t.defender.interval > 0:
                 if self.count % t.defender.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
-                    t.defender.shoot(35) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+
+                    #turbo naiwny algorytm
+                    distanceToShoot = 0
+                  
+                    for v in self.vikings.keys():
+                        
+                        vikingX = self.vikings[v].body.position.x
+                        
+                        if distanceToShoot < vikingX:
+                            distanceToShoot = vikingX
+                            print "VIKINGX: "+str( vikingX )
+
+                    distanceToShoot = 55.0 - distanceToShoot #bo chcemy tak naprawde "negatyw" - liczymy odleglosc na jaka strzelamy pociskiem a nie NA JAKIEJ ODLEGLOSCI ma wyladowac
+                    print "DISTANCE TO SHOOT: " + str(distanceToShoot)
+                    t.defender.shoot( float(distanceToShoot) ) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+
+                    distanceToShoot = 0
 
         for event in self.eventQueue:
             if event.type==KEYDOWN and event.key==K_ESCAPE:
@@ -220,34 +282,6 @@ class DefenseScene(Scene.Scene):
         #else
         #    pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
-        #rysowanie floorMenu
-        if self.showFloorMenu:
-            self.doShowFloorMenu()
-        else:
-            self.buttons[5] = None
-            self.buttons[6] = None
-            self.buttons[7] = None
-            self.buttons[8] = None
-            self.buttons[9] = None
-            self.buttons[10] = None
-            self.buttons[11] = None
-
-        #rysowanie floorMenuStore
-        if self.showFloorMenuStore:
-            self.doShowFloorMenuStore()
-        else:
-            self.buttons[12] = None
-            self.buttons[13] = None
-            self.buttons[14] = None
-            self.buttons[15] = None
-            self.buttons[16] = None
-            self.buttons[17] = None
-            self.buttons[18] = None
-
-        for button in self.buttons:
-            if button != None:
-                button.displayImage(self.screen, False)
-
     def initialDraw(self):
 
         backgroundTexture2 = pygame.image.load("resources/gameBackground2.png").convert()
@@ -275,10 +309,42 @@ class DefenseScene(Scene.Scene):
         amountLabel = moneyFont.render(str(self.money), 1, (255,255,0))
         self.screen.blit(amountLabel, (110, 600))
 
-        if self.showFloorMenu:
-            self.refreshFloorMenu = True
-        if self.showFloorMenuStore:
-            self.refreshFloorMenuStore = True
+        #if self.showFloorMenu:
+        #    self.refreshFloorMenu = True
+        #if self.showFloorMenuStore:
+        #    self.refreshFloorMenuStore = True
+
+    def tryPay(self, amount):
+        if self.money < amount:
+            return False
+        else:
+            self.money -= amount
+            self.showMoney()
+            return True
+
+    #funkcje liczace wartosci skillow
+    def calculateDamageCost(self, defender):
+        print " DD: "+str(int( ( defender.getDamage() - SKILLS.DAMAGE[ defender.name ] ) / SKILLS.STEP ))
+        cost = COSTS.DEFENDERUPGRADE.DAMAGE + ( COSTS.DEFENDER[ defender.name ] / 4 )
+        for i in range( int( ( defender.getDamage() - SKILLS.DAMAGE[ defender.name ] ) / SKILLS.STEP ) ):
+            cost += COSTS.DEFENDERUPGRADE.STEP
+
+        return int( cost )
+
+    def calculateIntervalCost(self, defender):
+        cost = COSTS.DEFENDERUPGRADE.RELOAD + ( COSTS.DEFENDER[ defender.name ] / 4 )
+        for i in range( int( ( SKILLS.INTERVAL[ defender.name ] - defender.getInterval() ) / SKILLS.STEP ) ):     #tu odejmuje na odwrot bo ten parametr maleje a nie narasta
+            cost += COSTS.DEFENDERUPGRADE.STEP
+
+        return int( cost )
+
+    def calculateSpeedCost(self, defender):
+        cost = COSTS.DEFENDERUPGRADE.SPEED + ( COSTS.DEFENDER[ defender.name ] / 4 )
+        for i in range( int( ( defender.getSpeed() - SKILLS.SPEED[ defender.name ] ) / SKILLS.STEP ) ):
+            cost += COSTS.DEFENDERUPGRADE.STEP
+
+        return int( cost )
+        
             
     def dispose(self):
         for body in self.world.bodies:
@@ -378,41 +444,49 @@ class DefenseScene(Scene.Scene):
                                     self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
                                     
                                 if button.name == "UPGRADEFLOORLEVEL":
-                                    if self.money >= 7000 and self.towerFloors[self.activeFloorMenu].level < 1:
-                                        self.towerFloors[self.activeFloorMenu].level += 1
-                                        self.towerFloors[self.activeFloorMenu].hp = 100 * (self.towerFloors[self.activeFloorMenu].level + 1)
-                                        self.money -= 7000
+                                    if self.towerFloors[self.activeFloorMenu].level < SKILLS.FLOOR.MAXLEVEL:
+                                        
+                                        if self.tryPay( COSTS.FLOOR.UPGRADE ):
+                                            self.towerFloors[self.activeFloorMenu].upgrade()
+                                            
+                                            self.refreshFloorMenu = True
 
-                                        self.refreshFloorMenu = True
 
                                 if button.name == "UPGRADEDEFENDERDAMAGE":
-                                    self.towerFloors[self.activeFloorMenu].defender.upgradeDamage()
-                                    self.money -= COSTS.DEFENDERUPGRADE.ATTACK
 
-                                    self.showMoney()
+                                    if self.towerFloors[self.activeFloorMenu].defender.name != "NONE":
+                                                
+                                        if self.tryPay( self.calculateDamageCost( self.towerFloors[self.activeFloorMenu].defender ) ):
+                                            self.towerFloors[self.activeFloorMenu].defender.upgradeDamage()
+                                            self.refreshFloorMenu = True
 
                                 if button.name == "UPGRADEDEFENDERINTERVAL":
-                                    self.towerFloors[self.activeFloorMenu].defender.upgradeInterval()
-                                    self.money -= COSTS.DEFENDERUPGRADE.RELOAD
 
-                                    self.showMoney()
+                                    if self.towerFloors[self.activeFloorMenu].defender.name != "NONE" and self.towerFloors[self.activeFloorMenu].defender.interval >= ( SKILLS.MINVALUE ):  #bardzo brzydki workaround ale w tym przypadku potrzebny - ten skill ma jasno wytyczona granice i nie chcemy zeby nie dalo sie juz upgradeowac a zeby kasa sie odliczala
+
+                                        if self.tryPay( self.calculateIntervalCost( self.towerFloors[self.activeFloorMenu].defender ) ):
+                                            self.towerFloors[self.activeFloorMenu].defender.upgradeInterval()
+                                            self.refreshFloorMenu = True
 
                                 if button.name == "UPGRADEDEFENDERSPEED":
-                                    self.towerFloors[self.activeFloorMenu].defender.upgradeSpeed()
-                                    self.money -= COSTS.DEFENDERUPGRADE.SPEED
 
-                                    self.showMoney()
-                                        
+                                    if self.towerFloors[self.activeFloorMenu].defender.name != "NONE":
+                                    
+                                        if self.tryPay( self.calculateSpeedCost( self.towerFloors[self.activeFloorMenu].defender ) ):
+                                            self.towerFloors[self.activeFloorMenu].defender.upgradeSpeed()
+                                            self.refreshFloorMenu = True
+
+
                                 if button.name == "FIXTOWERFLOOR":
                                     cost = (100 - self.towerFloors[self.activeFloorMenu].hp) * 5
 
-                                    if self.money >= cost and self.towerFloors[self.activeFloorMenu].hp < (100 * (self.towerFloors[self.activeFloorMenu].level + 1) ):
-                                        self.towerFloors[self.activeFloorMenu].hp = (100 * (self.towerFloors[self.activeFloorMenu].level + 1) )
-                                        self.money -= cost
+                                    if self.towerFloors[self.activeFloorMenu].hp < (100 * (self.towerFloors[self.activeFloorMenu].level + 1) ):
 
-                                        self.refreshFloorMenu = True
+                                        if self.tryPay(cost):
 
-                                        self.showMoney()
+                                            self.towerFloors[self.activeFloorMenu].hp = (100 * (self.towerFloors[self.activeFloorMenu].level + 1) )
+
+                                            self.refreshFloorMenu = True
 
                                 if button.name == "BUYDEFENDER":
                                     self.showFloorMenu = False
@@ -421,77 +495,68 @@ class DefenseScene(Scene.Scene):
                                     self.refreshFloorMenuStore = True
 
                                 if button.name == "SELLDEFENDER":
-                                    self.money += COSTS.DEFENDER[self.towerFloors[self.activeFloorMenu].defender.name]
+                                    defender = self.towerFloors[self.activeFloorMenu].defender
+
+                                    ##gracz odzyskuje cala kase ktora zaplacil za defendera ale traci wszystko co poulepszal - to chyba ma sens
+                                    self.money += COSTS.DEFENDER[ defender.name ]
+                                    self.showMoney()
+                                    
                                     self.towerFloors[self.activeFloorMenu].setDefender("NONE")
                                     self.refreshFloorMenu = True
 
-                                    self.showMoney()
-
                                 if button.name == "BUYSPEARMAN":
-                                    self.towerFloors[self.activeFloorMenu].setDefender("SPEARMAN")
-                                    self.money -= COSTS.DEFENDER[ "SPEARMAN" ]
-                                    
-                                    self.showFloorMenu = True
-                                    self.refreshFloorMenu = True
-                                    self.showFloorMenuStore = False
-                                    self.refreshFloorMenuStore = True
+                                    if self.tryPay( COSTS.DEFENDER[ "SPEARMAN" ] ):
+                                        self.towerFloors[self.activeFloorMenu].setDefender("SPEARMAN")
 
-                                    self.showMoney()
+                                        self.showFloorMenu = True
+                                        self.refreshFloorMenu = True
+                                        self.showFloorMenuStore = False
+                                        self.refreshFloorMenuStore = True
 
                                 if button.name == "BUYSLINGER":
-                                    self.towerFloors[self.activeFloorMenu].setDefender("SLINGER")
-                                    self.money -= COSTS.DEFENDER[ "SLINGER" ]
-                                    
-                                    self.showFloorMenu = True
-                                    self.refreshFloorMenu = True
-                                    self.showFloorMenuStore = False
-                                    self.refreshFloorMenuStore = True
-
-                                    self.showMoney()
+                                    if self.tryPay( COSTS.DEFENDER[ "SLINGER" ] ):
+                                        self.towerFloors[self.activeFloorMenu].setDefender("SLINGER")
+                                        
+                                        self.showFloorMenu = True
+                                        self.refreshFloorMenu = True
+                                        self.showFloorMenuStore = False
+                                        self.refreshFloorMenuStore = True
 
                                 if button.name == "BUYARCHER":
-                                    self.towerFloors[self.activeFloorMenu].setDefender("ARCHER")
-                                    self.money -= COSTS.DEFENDER[ "ARCHER" ]
-                                    
-                                    self.showFloorMenu = True
-                                    self.refreshFloorMenu = True
-                                    self.showFloorMenuStore = False
-                                    self.refreshFloorMenuStore = True
-
-                                    self.showMoney()
+                                    if self.tryPay( COSTS.DEFENDER[ "ARCHER" ] ):
+                                        self.towerFloors[self.activeFloorMenu].setDefender("ARCHER")
+                                        
+                                        self.showFloorMenu = True
+                                        self.refreshFloorMenu = True
+                                        self.showFloorMenuStore = False
+                                        self.refreshFloorMenuStore = True
 
                                 if button.name == "BUYCATAPULT":
-                                    self.towerFloors[self.activeFloorMenu].setDefender("CATAPULT")
-                                    self.money -= COSTS.DEFENDER[ "CATAPULT" ]
-                                    
-                                    self.showFloorMenu = True
-                                    self.refreshFloorMenu = True
-                                    self.showFloorMenuStore = False
-                                    self.refreshFloorMenuStore = True
-
-                                    self.showMoney()
+                                    if self.tryPay( COSTS.DEFENDER[ "CATAPULT" ] ):
+                                        self.towerFloors[self.activeFloorMenu].setDefender("CATAPULT")
+                                        
+                                        self.showFloorMenu = True
+                                        self.refreshFloorMenu = True
+                                        self.showFloorMenuStore = False
+                                        self.refreshFloorMenuStore = True
 
                                 if button.name == "BUYCANNON":
-                                    self.towerFloors[self.activeFloorMenu].setDefender("CANNON")
-                                    self.money -= COSTS.DEFENDER[ "CANNON" ]
-                                    
-                                    self.showFloorMenu = True
-                                    self.refreshFloorMenu = True
-                                    self.showFloorMenuStore = False
-                                    self.refreshFloorMenuStore = True
-
-                                    self.showMoney()
+                                    if self.tryPay( COSTS.DEFENDER[ "CANNON" ] ):
+                                        self.towerFloors[self.activeFloorMenu].setDefender("CANNON")
+                                        
+                                        self.showFloorMenu = True
+                                        self.refreshFloorMenu = True
+                                        self.showFloorMenuStore = False
+                                        self.refreshFloorMenuStore = True
 
                                 if button.name == "BUYWIZARD":
-                                    self.towerFloors[self.activeFloorMenu].setDefender("WIZARD")
-                                    self.money -= COSTS.DEFENDER[ "WIZARD" ]
-                                    
-                                    self.showFloorMenu = True
-                                    self.refreshFloorMenu = True
-                                    self.showFloorMenuStore = False
-                                    self.refreshFloorMenuStore = True
-
-                                    self.showMoney()
+                                    if self.tryPay( COSTS.DEFENDER[ "WIZARD" ] ):
+                                        self.towerFloors[self.activeFloorMenu].setDefender("WIZARD")
+        
+                                        self.showFloorMenu = True
+                                        self.refreshFloorMenu = True
+                                        self.showFloorMenuStore = False
+                                        self.refreshFloorMenuStore = True
 
                                 if button.name == "CLOSEFLOORMENUSTORE":
                                     self.showFloorMenu = True
@@ -502,10 +567,12 @@ class DefenseScene(Scene.Scene):
     def doShowFloorMenu(self):
 
         if self.refreshFloorMenu:
-
+            print "PIK"
             self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
 
             self.refreshFloorMenu = False
+
+            defender = self.towerFloors[self.activeFloorMenu].defender
             
             #tlo menu
             self.screen.blit(self.floorMenuTexture, (940, 590))
@@ -519,7 +586,7 @@ class DefenseScene(Scene.Scene):
             LevelValue = floorMenuFont.render(str( self.towerFloors[self.activeFloorMenu].level ), 1, (0,0,0))
             HPLabel = floorMenuFont.render("HP:", 1, (0,0,0))
             HPValue = floorMenuFont.render(str( self.towerFloors[self.activeFloorMenu].hp ), 1, (0,0,0))
-            UpgradeLevelValue = floorMenuFont.render("7000$", 1, (100,100,0))
+            UpgradeLevelValue = floorMenuFont.render(str( COSTS.FLOOR.UPGRADE ), 1, (100,100,0))
             FixTowerFloorValue = floorMenuFont.render(str( ((100 * (self.towerFloors[self.activeFloorMenu].level + 1) ) - self.towerFloors[self.activeFloorMenu].hp) * 5 ) + "$", 1, (0,100,0))
 
             dName = str( self.towerFloors[self.activeFloorMenu].defender.name )
@@ -531,15 +598,15 @@ class DefenseScene(Scene.Scene):
             DefenderNameLabel = floorMenuFont.render( dName, 1, (0,0,0))
             AttackLabel = floorMenuFont.render("ATTACK:", 1, (0,0,0))
             ReloadLabel = floorMenuFont.render("RELOAD:", 1, (0,0,0))
-            SpeedLabel = floorMenuFont.render(" SPEED:", 1, (0,0,0))
+            SpeedLabel = floorMenuFont.render(" SPEED:", 1, (0,0,0))           
 
-            AttackUpgradeValue = floorMenuFont.render(str( COSTS.DEFENDERUPGRADE.ATTACK ), 1, (100,100,0))
-            ReloadUpgradeValue = floorMenuFont.render(str( COSTS.DEFENDERUPGRADE.RELOAD ), 1, (100,100,0))
-            SpeedUpgradeValue = floorMenuFont.render(str( COSTS.DEFENDERUPGRADE.SPEED ), 1, (100,100,0))
+            AttackUpgradeValue = floorMenuFont.render(str( self.calculateDamageCost( defender ) ), 1, (100,100,0))
+            ReloadUpgradeValue = floorMenuFont.render(str( self.calculateIntervalCost( defender ) ), 1, (100,100,0))
+            SpeedUpgradeValue = floorMenuFont.render(str( self.calculateSpeedCost( defender ) ), 1, (100,100,0))
 
-            AttackValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.bullets[ self.towerFloors[self.activeFloorMenu].defender.chosenBulletType ].damage) ), 1, (0,0,0))
-            ReloadValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.interval) ), 1, (0,0,0))
-            SpeedValue = floorMenuFont.render(str( int( self.towerFloors[self.activeFloorMenu].defender.bullets[ self.towerFloors[self.activeFloorMenu].defender.chosenBulletType ].speed) ), 1, (0,0,0))
+            AttackValue = floorMenuFont.render(str( int( defender.getDamage() ) ), 1, (0,0,0))
+            ReloadValue = floorMenuFont.render(str( int( defender.getInterval() ) ), 1, (0,0,0))
+            SpeedValue = floorMenuFont.render(str( int( defender.getSpeed() ) ), 1, (0,0,0))
 
             self.screen.blit(LevelLabel, (950, 630))
             self.screen.blit(LevelValue, (980, 630))
