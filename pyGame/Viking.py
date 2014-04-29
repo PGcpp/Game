@@ -42,7 +42,7 @@ class Viking():
 			self.attackInterval = 60
 			self.damage = 100
 			self.health = 100
-			self.speed = 5
+			self.speed = 3
 			self.money = 100
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking1.png")
 
@@ -50,7 +50,7 @@ class Viking():
 			self.attackInterval = 60
 			self.damage = 200
 			self.health = 200
-			self.speed = 7
+			self.speed = 5
 			self.money = 200
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking2.png")
 
@@ -58,7 +58,7 @@ class Viking():
 			self.attackInterval = 60
 			self.damage = 400
 			self.health = 400
-			self.speed = 3
+			self.speed = 1
 			self.money = 400
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking3.png")
 

@@ -25,9 +25,9 @@ class DefenseScene(Scene.Scene):
     POSITION_ITERATIONS=10
     SCREEN_WIDTH = 800
     SCREEN_HEIGHT=600
-    INTERVAL1 = 10
-    INTERVAL2 = 15
-    INTERVAL3 = 20
+    INTERVAL1 = 12
+    INTERVAL2 = 20
+    INTERVAL3 = 25
 
     world = None
     ground = None
@@ -57,7 +57,6 @@ class DefenseScene(Scene.Scene):
 
     vikingId = 0
     vikings = {}
-    vikingCount = 0
     vikingWave = 0
 
     def DefenseScene(screen):
@@ -134,21 +133,19 @@ class DefenseScene(Scene.Scene):
             self.handleFloorMenu(event)
 
     def deployVikings(self):
-        if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * self.INTERVAL1) == 0:
+        if self.count % (self.TARGET_FPS * self.INTERVAL1) == 0:
             for i in range(5 + self.vikingWave):
                 self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, uniform(-20, 0), 5)
                 self.vikingId += 1
-                self.vikingCount += 1
-            if self.vikingCount % 10 == 0:
-                self.vikingWave += 1
+            self.vikingWave += 1
         if self.vikingWave >= 2:
-            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * self.INTERVAL2) == 0:
-                for i in range(1 + self.vikingWave):
+            if self.count % (self.TARGET_FPS * self.INTERVAL2) == 0:
+                for i in range(self.vikingWave - 2):
                     self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, uniform(-10, 0), 5)
                     self.vikingId += 1
         if self.vikingWave >= 4:
-            if self.count % ((self.TARGET_FPS - self.vikingWave * 10) * self.INTERVAL3) == 0:
-                for i in range(1 + self.vikingWave):
+            if self.count % (self.TARGET_FPS * self.INTERVAL3) == 0:
+                for i in range(self.vikingWave - 4):
                     self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, uniform(-10, 0), 5)
                     self.vikingId += 1
             
