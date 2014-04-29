@@ -90,7 +90,9 @@ class SettingsScene(Scene.Scene):
     def drawBackground(self):
         self.screen.fill((0,0,0,0))
         image = pygame.image.load("resources/settingsBackground.png")
+        menuLabel = pygame.image.load("resources/settingsMenuMenuLabel.png")
         self.screen.blit(image, (0, 0))
+        self.screen.blit(menuLabel, (750, 30))
         pygame.display.flip()
 
     def dispose(self):

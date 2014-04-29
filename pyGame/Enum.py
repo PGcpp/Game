@@ -137,7 +137,7 @@ class SKILLS:
         }
     MAXDISTANCE = {
         "NONE": -1.0,
-        "SPEARMAN": 5.0,
+        "SPEARMAN": 10.0,
         "SLINGER": 30.0,
         "ARCHER": 40.0,
         "CATAPULT": 50.0,

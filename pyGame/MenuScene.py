@@ -36,7 +36,9 @@ class MenuScene(Scene.Scene):
     def drawBackground(self):
         self.screen.fill((0,0,0,0))
         image = pygame.image.load("resources/menuBackground.png")
+        menuLabel = pygame.image.load("resources/mainMenuMenuLabel.png")
         self.screen.blit(image, (0, 0))
+        self.screen.blit(menuLabel, (800, 30))
         pygame.display.flip()
 
     def dispose(self):
