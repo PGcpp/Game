@@ -83,7 +83,7 @@ class DefenseScene(Scene.Scene):
 
         self.gameOverTexture = pygame.image.load("resources/gameOver.png").convert_alpha()
         
-        self.backgroundTexture = pygame.image.load("resources/gameBackground1.png").convert()
+        self.backgroundTexture = pygame.image.load("resources/gameBackground.png").convert()
 
         self.floorMenuTexture = pygame.image.load("resources/floorMenu.png").convert_alpha()
 
@@ -91,15 +91,7 @@ class DefenseScene(Scene.Scene):
 
         self.chosenFloorTexture = pygame.image.load('resources/chosenFloor.png').convert_alpha()
 
-        self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 1000 )
-        self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 1000 )
-        self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 1000 )
-        self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 1000 )
-                
-        self.towerFloors[0].setDefender("NONE")
-        self.towerFloors[1].setDefender("NONE")
-        self.towerFloors[2].setDefender("NONE")
-        self.towerFloors[3].setDefender("NONE")
+        self.drawTower()
 
         self.clock = pygame.time.Clock()
 
@@ -108,32 +100,22 @@ class DefenseScene(Scene.Scene):
         self.initialDraw()
 
     def step(self):
-        print "FPS: " + str( self.clock.get_fps() )
+        #print "FPS: " + str( self.clock.get_fps() )
         
         self.screen.blit( self.backgroundTexture, (0,0) )
 
         #rysowanie tekstury wiezy
-        for tF in self.towerFloors:
+        for tF in self.towerFloors[self.targetFloor:4]:
             self.screen.blit( tF.image[tF.level], (tF.xPos * 20, tF.yPos * 20) )
 
         #rysowanie defenderow
-        self.screen.blit( self.towerFloors[0].defender.image, ( 1069, 486 ) )
-        self.screen.blit( self.towerFloors[1].defender.image, ( 1069, 406 ) )
-        self.screen.blit( self.towerFloors[2].defender.image, ( 1069, 322 ) )
-        self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 238 ) )
+        self.drawDefenders()
         
         #rysowanie floorMenu
         if self.showFloorMenu:
 
             #rysowanie markera zaznaczonego defendera
-            if self.activeFloorMenu == 0:
-                self.screen.blit( self.chosenFloorTexture, ( 1069, 486 ) )
-            if self.activeFloorMenu == 1:
-                self.screen.blit( self.chosenFloorTexture, ( 1069, 406 ) )
-            if self.activeFloorMenu == 2:
-                self.screen.blit( self.chosenFloorTexture, ( 1069, 322 ) )
-            if self.activeFloorMenu == 3:
-                self.screen.blit( self.chosenFloorTexture, ( 1069, 238 ) )
+            self.drawChosenFloorMenu()
 
             #rysowanie menu    
             self.doShowFloorMenu()
@@ -175,7 +157,7 @@ class DefenseScene(Scene.Scene):
         self.count += 1
         self.deployVikings()
         
-        for t in self.towerFloors:
+        for t in self.towerFloors[self.targetFloor:4]:
             if t.defender.interval > 0:
                 if self.count % t.defender.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
 
@@ -207,7 +189,7 @@ class DefenseScene(Scene.Scene):
 
     def deployVikings(self):
         if self.count % (self.TARGET_FPS * self.INTERVAL1) == 0:
-            for i in range(5 + self.vikingWave):
+            for i in range(2 + self.vikingWave):
                 self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, uniform(-20, 0), 5)
                 self.vikingId += 1
             self.vikingWave += 1
@@ -259,6 +241,8 @@ class DefenseScene(Scene.Scene):
         if floor.hp <= 0:
             print "Tower floor " + str(self.targetFloor) + " destroyed!"
             self.targetFloor += 1
+            self.drawTower()
+            self.drawButtoms()
             if self.targetFloor >= 4:
                 self.targetFloor = 3
                 self.gameOver = True
@@ -307,18 +291,13 @@ class DefenseScene(Scene.Scene):
 
     def initialDraw(self):
 
-        backgroundTexture2 = pygame.image.load("resources/gameBackground2.png").convert()
-        self.screen.blit(backgroundTexture2, ( 1034, 0 ) )
+        self.screen.blit(self.backgroundTexture, ( 1034, 0 ) )
 
         #rysowanie tekstury ground
         self.screen.blit( self.groundTexture, (0, 559) )
 
         #rysowanie przyciskow
-        self.buttons[0] = Button(1049, 486, "FLOOR1")
-        self.buttons[1] = Button(1049, 406, "FLOOR2")
-        self.buttons[2] = Button(1049, 322, "FLOOR3")
-        self.buttons[3] = Button(1049, 238, "FLOOR4")
-        self.buttons[4] = Button(1230, 20, "SHOWMENU")
+        self.drawButtoms()
 
         self.showMoney()
 
@@ -830,6 +809,110 @@ class DefenseScene(Scene.Scene):
                                 self.state = STATE.STOPPED
                                 self.stop()
                                 continueLoop = False
+
+    def drawTower(self):
+        if self.targetFloor == 0:
+            self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 100 )
+            self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 100 )
+            self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 100 )
+            self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 100 )
+            self.towerFloors[0].setDefender("NONE")
+            self.towerFloors[1].setDefender("NONE")
+            self.towerFloors[2].setDefender("NONE")
+            self.towerFloors[3].setDefender("NONE")
+        elif self.targetFloor == 1:
+            floor1 = self.towerFloors[1]
+            floor2 = self.towerFloors[2]
+            floor3 = self.towerFloors[3]
+            self.towerFloors[0] = None
+            self.towerFloors[1] = TowerFloor( self.world, 2,  1012/self.PPM, 476/self.PPM ,["resources/brick2.png", "resources/stone2.png"], floor1.hp )
+            self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 392/self.PPM ,["resources/brick3.png", "resources/stone3.png"], floor2.hp )
+            self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 224/self.PPM ,["resources/brick4.png", "resources/stone4.png"], floor3.hp )
+            self.towerFloors[1].defender = floor1.defender
+            self.towerFloors[2].defender = floor2.defender
+            self.towerFloors[3].defender = floor3.defender
+            self.towerFloors[1].level = floor1.level
+            self.towerFloors[2].level = floor2.level
+            self.towerFloors[3].level = floor3.level
+        elif self.targetFloor == 2:
+            floor2 = self.towerFloors[2]
+            floor3 = self.towerFloors[3]
+            self.towerFloors[0] = None
+            self.towerFloors[1] = None
+            self.towerFloors[2] = TowerFloor( self.world, 3,  1023/self.PPM, 476/self.PPM ,["resources/brick3.png", "resources/stone3.png"], floor2.hp )
+            self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 308/self.PPM ,["resources/brick4.png", "resources/stone4.png"], floor3.hp )
+            self.towerFloors[2].defender = floor2.defender
+            self.towerFloors[3].defender = floor3.defender
+            self.towerFloors[2].level = floor2.level
+            self.towerFloors[3].level = floor3.level
+        elif self.targetFloor == 3:
+            floor3 = self.towerFloors[3]
+            self.towerFloors[0] = None
+            self.towerFloors[1] = None
+            self.towerFloors[2] = None
+            self.towerFloors[3] = TowerFloor( self.world, 4,  1016/self.PPM, 392/self.PPM ,["resources/brick4.png", "resources/stone4.png"], floor3.hp )
+            self.towerFloors[3].defender = floor3.defender
+            self.towerFloors[3].level = floor3.level
+
+    def drawDefenders(self):
+        if self.targetFloor == 0:
+            self.screen.blit( self.towerFloors[0].defender.image, ( 1069, 486 ) )
+            self.screen.blit( self.towerFloors[1].defender.image, ( 1069, 406 ) )
+            self.screen.blit( self.towerFloors[2].defender.image, ( 1069, 322 ) )
+            self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 238 ) )
+        elif self.targetFloor == 1:
+            self.screen.blit( self.towerFloors[1].defender.image, ( 1069, 486 ) )
+            self.screen.blit( self.towerFloors[2].defender.image, ( 1069, 406 ) )
+            self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 322 ) )
+        elif self.targetFloor == 2:
+            self.screen.blit( self.towerFloors[2].defender.image, ( 1069, 486 ) )
+            self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 406 ) )
+        elif self.targetFloor == 3:
+            self.screen.blit( self.towerFloors[3].defender.image, ( 1069, 486 ) )
         
-        
+    def drawButtoms(self):
+        if self.targetFloor == 0:
+            self.buttons[0] = Button(1049, 486, "FLOOR1")
+            self.buttons[1] = Button(1049, 406, "FLOOR2")
+            self.buttons[2] = Button(1049, 322, "FLOOR3")
+            self.buttons[3] = Button(1049, 238, "FLOOR4")
+            self.buttons[4] = Button(1230, 20, "SHOWMENU")
+        elif self.targetFloor == 1:
+            self.buttons[0] = None
+            self.buttons[1] = Button(1049, 486, "FLOOR2")
+            self.buttons[2] = Button(1049, 406, "FLOOR3")
+            self.buttons[3] = Button(1049, 322, "FLOOR4")
+        elif self.targetFloor == 2:
+            self.buttons[1] = None
+            self.buttons[2] = Button(1049, 486, "FLOOR3")
+            self.buttons[3] = Button(1049, 406, "FLOOR4")
+        elif self.targetFloor == 3:
+            self.buttons[2] = None
+            self.buttons[3] = Button(1049, 486, "FLOOR4")
+
+    def drawChosenFloorMenu(self):
+        if self.targetFloor == 0:
+            if self.activeFloorMenu == 0:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 486 ) )
+            if self.activeFloorMenu == 1:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 406 ) )
+            if self.activeFloorMenu == 2:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 322 ) )
+            if self.activeFloorMenu == 3:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 238 ) )
+        elif self.targetFloor == 1:
+            if self.activeFloorMenu == 1:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 486 ) )
+            if self.activeFloorMenu == 2:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 406 ) )
+            if self.activeFloorMenu == 3:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 322 ) )
+        elif self.targetFloor == 2:
+            if self.activeFloorMenu == 2:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 486 ) )
+            if self.activeFloorMenu == 3:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 406 ) )
+        elif self.targetFloor == 3:
+            if self.activeFloorMenu == 3:
+                self.screen.blit( self.chosenFloorTexture, ( 1069, 486 ) )
 

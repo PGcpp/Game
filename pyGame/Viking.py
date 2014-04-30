@@ -12,7 +12,7 @@ class Viking():
 	
 	name = None
 	attackInterval = 60
-	damage = 100
+	damage = 10
 	health = None
 	speed = None
 	vikingId = 0
@@ -40,7 +40,7 @@ class Viking():
 
 		if self.name == VIKING.TYPE_1:
 			self.attackInterval = 60
-			self.damage = 100
+			self.damage = 10
 			self.health = 100
 			self.speed = 3
 			self.money = 100
@@ -48,7 +48,7 @@ class Viking():
 
 		if self.name == VIKING.TYPE_2:
 			self.attackInterval = 60
-			self.damage = 200
+			self.damage = 15
 			self.health = 200
 			self.speed = 5
 			self.money = 200
@@ -56,7 +56,7 @@ class Viking():
 
 		if self.name == VIKING.TYPE_3:
 			self.attackInterval = 60
-			self.damage = 400
+			self.damage = 20
 			self.health = 400
 			self.speed = 1
 			self.money = 400
