@@ -96,19 +96,19 @@ class DefenseScene(Scene.Scene):
         self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 1000 )
         self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 1000 )
                 
-        self.towerFloors[0].setDefender("ARCHER")
-        self.towerFloors[1].setDefender("CATAPULT")
+        self.towerFloors[0].setDefender("NONE")
+        self.towerFloors[1].setDefender("NONE")
         self.towerFloors[2].setDefender("NONE")
         self.towerFloors[3].setDefender("NONE")
 
         self.clock = pygame.time.Clock()
 
-        self.money = 500
+        self.money = 1500
 
         self.initialDraw()
 
     def step(self):
-        #print "FPS: " + str( self.clock.get_fps() )
+        print "FPS: " + str( self.clock.get_fps() )
         
         self.screen.blit( self.backgroundTexture, (0,0) )
 
@@ -261,9 +261,7 @@ class DefenseScene(Scene.Scene):
             self.targetFloor += 1
             if self.targetFloor >= 4:
                 self.targetFloor = 3
-                print "GAME OVER"
-                self.state = STATE.STOPPED
-                self.stop()
+                self.gameOver = True
 
     def killViking(self, viking):
         self.world.DestroyBody(viking.body)
