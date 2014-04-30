@@ -29,6 +29,8 @@ class DefenseScene(Scene.Scene):
     INTERVAL2 = 20
     INTERVAL3 = 25
 
+    gameOver = False
+
     world = None
     ground = None
     groundTexture = None
@@ -39,6 +41,8 @@ class DefenseScene(Scene.Scene):
     showFloorMenu = False
     refreshFloorMenu = True #czy nalezy odswiezyc FloorMenu (oraz grounda!)
     activeFloorMenu = None
+
+    gameOverTexture = None
 
     floorMenuStoreTexture = None
     
@@ -77,6 +81,8 @@ class DefenseScene(Scene.Scene):
         self.groundTextureRight = self.groundTextureRight.convert()
         self.ground.userData = ["ground"]
 
+        self.gameOverTexture = pygame.image.load("resources/gameOver.png").convert_alpha()
+        
         self.backgroundTexture = pygame.image.load("resources/gameBackground1.png").convert()
 
         self.floorMenuTexture = pygame.image.load("resources/floorMenu.png").convert_alpha()
@@ -195,6 +201,9 @@ class DefenseScene(Scene.Scene):
             if event.type==KEYDOWN and event.key==K_ESCAPE:
                 self.inGameMenuLoop()
             self.handleFloorMenu(event)
+
+        if self.gameOver:
+            self.gameOverLoop()
 
     def deployVikings(self):
         if self.count % (self.TARGET_FPS * self.INTERVAL1) == 0:
@@ -777,5 +786,52 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(storeWizardAttackValue, (1170, 656))
             self.screen.blit(storeWizardReloadValue, (1170, 664))
             self.screen.blit(storeWizardSpeedValue, (1170, 672))
+
+    def gameOverLoop(self):
+        
+        self.screen.blit( self.gameOverTexture, (0, 0) )
+        
+        buttons = [None]
+        buttons[0] = Button(200, 580, "BACKTOMENU")
+
+        for button in buttons:
+            button.displayImage(self.screen)
+
+        floorMenuFont = pygame.font.SysFont("monospace", 40, True)
+        
+        timeLabel = floorMenuFont.render("YOUR TIME:", 1, (200,200,200))
+        timeValue = floorMenuFont.render(str( datetime.timedelta( seconds = ( self.count / 60 ) ) ), 1, (250,250,250))
+
+        self.screen.blit( timeLabel, (430, 440) )
+        self.screen.blit( timeValue, (680, 440) )
+
+        pygame.display.flip()
+
+        continueLoop = True 
+
+        #wieszamy gre :)
+        while continueLoop:
+
+            eventQueue = pygame.event.get()
+            for event in eventQueue:
+                
+                if event.type == pygame.QUIT:
+                    self.onExit()
+                    self.state = STATE.EXIT
+                    self.stop()
+                    continueLoop = False
+                    
+                if event.type == pygame.MOUSEBUTTONUP:
+                    for button in buttons:
+                        x, y = event.pos
+                        if button.isHit(x, y):
+
+                            print button.name
+                
+                            if button.name == "BACKTOMENU":
+                                self.state = STATE.STOPPED
+                                self.stop()
+                                continueLoop = False
+        
         
 

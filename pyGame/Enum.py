@@ -77,7 +77,9 @@ class BUTTONS:
         #defense scene
         "VIKING1":"viking1.png",
         "VIKING2":"viking2.png",
-        "VIKING3":"viking3.png"
+        "VIKING3":"viking3.png",
+        #gameOver
+        "BACKTOMENU": "backToMenuButton.png"
 	}
 
 class COSTS:

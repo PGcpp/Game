@@ -43,14 +43,14 @@ class Game():
                 self.gameSound = pygame.mixer.Sound("resources/gameMusic.ogg")
                 self.effectsSound = pygame.mixer.Sound("resources/ambient.ogg")
                 
-                #introScene = IntroScene.IntroScene(self.screen)
-                #introScene.start()
+                introScene = IntroScene.IntroScene(self.screen)
+                introScene.start()
                 
-                #while introScene.state == STATE.RUNNING:
-                #        pass
+                while introScene.state == STATE.RUNNING:
+                        pass
 
-                #if introScene.state == STATE.EXIT:
-                #        self.Exit()
+                if introScene.state == STATE.EXIT:
+                        self.Exit()
 
                 while True:
 
