@@ -63,7 +63,7 @@ class Viking():
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking3.png")
 
 		self.body.linearVelocity = vec2(self.speed, 0)
-		self.image = self.image.convert()
+		self.image = self.image.convert_alpha()
 
 	def getPosition(self):
 		return self.body.position[0]
