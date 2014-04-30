@@ -25,6 +25,10 @@ class Game():
 
         menuSound = None
         startMenuSound = True
+        effectsSound = None
+        startEffectsSound = True
+        gameSound = None
+        startGameSound = True
         
         def __init__(self):
                 pygame.init()
@@ -36,6 +40,8 @@ class Game():
                 self.screen = pygame.display.set_mode(self.SCREEN_SIZE, self.BUFFER_MODE)
 
                 self.menuSound = pygame.mixer.Sound("resources/menu.wav")
+                self.gameSound = pygame.mixer.Sound("resources/gameMusic.ogg")
+                self.effectsSound = pygame.mixer.Sound("resources/ambient.ogg")
                 
                 #introScene = IntroScene.IntroScene(self.screen)
                 #introScene.start()
@@ -49,6 +55,9 @@ class Game():
                 while True:
 
                         self.menuSound.set_volume( Settings.getMusicLevel() )
+                        self.gameSound.set_volume( Settings.getMusicLevel() )
+                        self.effectsSound.set_volume( Settings.getEffectsLevel() )
+                        
                         if self.startMenuSound:
                                 self.menuSound.play(-1)
                         
@@ -63,6 +72,12 @@ class Game():
       
                         if self.menuScene.state == MENU.PLAY:
                                 self.menuSound.stop()
+
+                                if self.startGameSound:
+                                        self.gameSound.play(-1)
+                                if self.startEffectsSound:
+                                        self.effectsSound.play(-1)
+                                
                                 self.defenseScene.start()
 
                                 while self.defenseScene.state == STATE.RUNNING:
@@ -73,6 +88,8 @@ class Game():
                                         break
 
                                 elif self.defenseScene.state == STATE.STOPPED:
+                                        self.gameSound.stop()
+                                        self.effectsSound.stop()
                                         self.startMenuSound = True
                                         continue
                                         

@@ -42,8 +42,8 @@ class TowerFloor():
 
                 print "X: ",x,"   Y: ",y
 
-                self.defender = Defender( self.world, x, y, SKILLS.INTERVAL[ defenderName ], SKILLS.DAMAGE[ defenderName ], 'resources/defender_'+defenderName.lower()+'.png', defenderName )
-                self.defender.addBullet(1, 1, SKILLS.SPEED[ defenderName ], SKILLS.MAXDISTANCE[ defenderName ], BULLETSPRITE.name[ defenderName ] )
+                self.defender = Defender( self.world, x, y, SKILLS.INTERVAL[ defenderName ], SKILLS.MAXDISTANCE[ defenderName ], 'resources/defender_'+defenderName.lower()+'.png', defenderName )
+                self.defender.addBullet(1, 1, SKILLS.SPEED[ defenderName ], SKILLS.DAMAGE[ defenderName ], BULLETSPRITE.name[ defenderName ] )
 
         def upgrade(self):
                 self.level += 1

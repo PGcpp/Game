@@ -159,7 +159,18 @@ class BULLETSPRITE:
         "ARCHER":  "resources/bullet_archer.png",
         "CATAPULT":  "resources/bullet_catapult.png",
         "CANNON":  "resources/bullet_cannon.png",
-        "WIZARD":  "resources/bullet_cannon.png"
+        "WIZARD":  "resources/bullet_wizard.png"
+        }
+
+class BULLETMUSIC:
+    name = {
+        "NONE":  "resources/none.ogg",
+        "SPEARMAN": "resources/slinger.ogg",
+        "SLINGER":  "resources/slinger.ogg",
+        "ARCHER":  "resources/archer.ogg",
+        "CATAPULT":  "resources/catapult.ogg",
+        "CANNON":  "resources/cannon.ogg",
+        "WIZARD":  "resources/wizard.ogg"
         }
 
     

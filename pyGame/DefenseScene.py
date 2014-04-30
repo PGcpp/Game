@@ -96,7 +96,7 @@ class DefenseScene(Scene.Scene):
 
         self.clock = pygame.time.Clock()
 
-        self.money = 1500
+        self.money = 500
 
         self.initialDraw()
 
@@ -183,7 +183,8 @@ class DefenseScene(Scene.Scene):
                             distanceToShoot = vikingX
                             print "VIKINGX: "+str( vikingX )
 
-                    distanceToShoot = 55.0 - distanceToShoot #bo chcemy tak naprawde "negatyw" - liczymy odleglosc na jaka strzelamy pociskiem a nie NA JAKIEJ ODLEGLOSCI ma wyladowac
+                    if distanceToShoot > 0:  #czyli jesli w ogole ma strzelac
+                        distanceToShoot = 55.0 - distanceToShoot #bo chcemy tak naprawde "negatyw" - liczymy odleglosc na jaka strzelamy pociskiem a nie NA JAKIEJ ODLEGLOSCI ma wyladowac
                     print "DISTANCE TO SHOOT: " + str(distanceToShoot)
                     t.defender.shoot( float(distanceToShoot) ) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
 

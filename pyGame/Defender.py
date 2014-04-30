@@ -4,6 +4,7 @@ import Box2D
 from Box2D.b2 import *
 from Enum import *
 from Bullet import *
+import Settings
 
 class Defender():
 
@@ -27,6 +28,7 @@ class Defender():
 	yPos = None
 
 	name = None
+	sound = None
 
 	chosenBulletType = 0 #aktualnie wybrany rodzaj pocisku
 	bulletsAmount = 0 #aktualna ilosc dostepnych pociskow
@@ -49,6 +51,9 @@ class Defender():
 
 		self.icon = pygame.image.load('resources/defenderIco_'+self.name.lower()+'.png')
                 self.icon = self.icon.convert_alpha()
+
+                self.sound = pygame.mixer.Sound( BULLETMUSIC.name[ self.name ])
+                self.sound.set_volume( Settings.getEffectsLevel() )
 
 		self.body.userData = ["defender", self.image]
 
@@ -90,6 +95,7 @@ class Defender():
                                 Vx = self.getXVelocity(time, distance)
 
                                 #BUM!
+                                self.sound.play() 
                                 bulletBody.ApplyLinearImpulse( vec2( -Vx , Vy), (self.xPos - 1, self.yPos), True ) # -Vx bo chcemy strzelac z prawej strony w lewa [wieze mamy po prawej przeciwnicy z lewej]
                                                                                                                    # a self.xPos - 1 bo pocisk utworzony w self.xPos - 1, chcemy przylozyc sile w jego srodku
                                 #pocisk wystrzelony modyfikacja userData
