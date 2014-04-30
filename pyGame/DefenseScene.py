@@ -38,6 +38,8 @@ class DefenseScene(Scene.Scene):
     groundTextureRight = None
     count = 0
 
+    hpTexture = None
+
     showFloorMenu = False
     refreshFloorMenu = True #czy nalezy odswiezyc FloorMenu (oraz grounda!)
     activeFloorMenu = None
@@ -80,6 +82,8 @@ class DefenseScene(Scene.Scene):
         self.groundTextureRight = pygame.image.load("resources/ground_right.png")
         self.groundTextureRight = self.groundTextureRight.convert()
         self.ground.userData = ["ground"]
+
+        self.hpTexture = pygame.image.load("resources/hpBackground.png").convert_alpha()
 
         self.gameOverTexture = pygame.image.load("resources/gameOver.png").convert_alpha()
         
@@ -235,10 +239,24 @@ class DefenseScene(Scene.Scene):
 
     def attackTower(self, viking):
         floor = self.towerFloors[self.targetFloor]
-        floor.hp = floor.hp - viking.damage 
+        floor.hp = floor.hp - viking.damage
+
+        #wypisywanie hp:
+        if self.showFloorMenu and (not self.showFloorMenuStore):
+            self.printTowerFloorHP()
+        
         print "Viking " + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to floor " + str(self.targetFloor)
         print "Floor " + str(self.targetFloor) + " left " + str(floor.hp) + " hp"
         if floor.hp <= 0:
+
+            if self.showFloorMenu or self.showFloorMenuStore:
+                self.showFloorMenu = False
+                self.refreshFloorMenu = True
+                self.showFloorMenuStore = False
+                self.refreshFloorMenuStore = True
+
+                self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
+            
             print "Tower floor " + str(self.targetFloor) + " destroyed!"
             self.targetFloor += 1
             self.drawTower()
@@ -763,6 +781,21 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(storeWizardAttackValue, (1170, 656))
             self.screen.blit(storeWizardReloadValue, (1170, 664))
             self.screen.blit(storeWizardSpeedValue, (1170, 672))
+
+    def printTowerFloorHP(self):
+        if self.towerFloors[self.activeFloorMenu] != None:
+            floorMenuFont = pygame.font.SysFont("monospace", 12, True)
+
+            HPLabel = floorMenuFont.render("HP:", 1, (0,0,0))
+            HPValue = floorMenuFont.render(str( self.towerFloors[self.activeFloorMenu].hp ), 1, (0,0,0))
+
+            self.screen.blit(self.hpTexture, (950, 668))
+            self.screen.blit(self.hpTexture, (950, 685))
+            self.screen.blit(HPLabel, (950, 668))
+            self.screen.blit(HPValue, (970, 668))
+
+            FixTowerFloorValue = floorMenuFont.render(str( ((100 * (self.towerFloors[self.activeFloorMenu].level + 1) ) - self.towerFloors[self.activeFloorMenu].hp) * 5 ) + "$", 1, (0,100,0))
+            self.screen.blit(FixTowerFloorValue, (980, 685))
 
     def gameOverLoop(self):
         
