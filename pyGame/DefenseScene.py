@@ -50,6 +50,7 @@ class DefenseScene(Scene.Scene):
     backgroundTexture = None
 
     towerFloors = [None, None, None, None]
+    targetFloor = 0
 
     buttons = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
 
@@ -84,10 +85,10 @@ class DefenseScene(Scene.Scene):
 
         self.chosenFloorTexture = pygame.image.load('resources/chosenFloor.png').convert_alpha()
 
-        self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 100 )
-        self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 100 )
-        self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 100 )
-        self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 100 )
+        self.towerFloors[0] = TowerFloor( self.world, 1,  999/self.PPM, 476/self.PPM ,["resources/brick1.png", "resources/stone1.png"], 1000 )
+        self.towerFloors[1] = TowerFloor( self.world, 2, 1012/self.PPM, 392/self.PPM ,["resources/brick2.png", "resources/stone2.png"], 1000 )
+        self.towerFloors[2] = TowerFloor( self.world, 3, 1023/self.PPM, 308/self.PPM ,["resources/brick3.png", "resources/stone3.png"], 1000 )
+        self.towerFloors[3] = TowerFloor( self.world, 4, 1016/self.PPM, 140/self.PPM ,["resources/brick4.png", "resources/stone4.png"], 1000 )
                 
         self.towerFloors[0].setDefender("ARCHER")
         self.towerFloors[1].setDefender("CATAPULT")
@@ -181,11 +182,11 @@ class DefenseScene(Scene.Scene):
                         
                         if distanceToShoot < vikingX:
                             distanceToShoot = vikingX
-                            print "VIKINGX: "+str( vikingX )
+                            #print "VIKINGX: "+str( vikingX )
 
                     if distanceToShoot > 0:  #czyli jesli w ogole ma strzelac
                         distanceToShoot = 55.0 - distanceToShoot #bo chcemy tak naprawde "negatyw" - liczymy odleglosc na jaka strzelamy pociskiem a nie NA JAKIEJ ODLEGLOSCI ma wyladowac
-                    print "DISTANCE TO SHOOT: " + str(distanceToShoot)
+                    #print "DISTANCE TO SHOOT: " + str(distanceToShoot)
                     t.defender.shoot( float(distanceToShoot) ) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
 
                     distanceToShoot = 0
@@ -238,8 +239,22 @@ class DefenseScene(Scene.Scene):
             viking = self.vikings[body.userData[2]]
             viking.attackInterval -= 1
             if viking.attackInterval == 0:
-                print "Viking " + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to tower"
+                self.attackTower(viking)
                 viking.attackInterval = 60
+
+    def attackTower(self, viking):
+        floor = self.towerFloors[self.targetFloor]
+        floor.hp = floor.hp - viking.damage 
+        print "Viking " + str(viking.vikingId) + " deal " + str(viking.damage) + " dmg to floor " + str(self.targetFloor)
+        print "Floor " + str(self.targetFloor) + " left " + str(floor.hp) + " hp"
+        if floor.hp <= 0:
+            print "Tower floor " + str(self.targetFloor) + " destroyed!"
+            self.targetFloor += 1
+            if self.targetFloor >= 4:
+                self.targetFloor = 3
+                print "GAME OVER"
+                self.state = STATE.STOPPED
+                self.stop()
 
     def killViking(self, viking):
         self.world.DestroyBody(viking.body)

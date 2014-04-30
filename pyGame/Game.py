@@ -16,7 +16,7 @@ import Settings
 class Game():
 
         SCREEN_SIZE = (1280, 720)
-        BUFFER_MODE = DOUBLEBUF | FULLSCREEN 
+        BUFFER_MODE = DOUBLEBUF #| FULLSCREEN 
         screen = None
 
         menuScene = None
