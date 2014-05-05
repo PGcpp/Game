@@ -34,7 +34,7 @@ class VIKING:
         "DAMAGE": 15,
         "HEALTH": 150,
         "MONEY": 400,
-        "SPEED": 3,
+        "SPEED": 5,
         "IMAGE": "viking2.png",
         }
     TYPE_3 = {
@@ -42,7 +42,7 @@ class VIKING:
         "DAMAGE": 20,
         "HEALTH": 300,
         "MONEY": 500,
-        "SPEED": 3,
+        "SPEED": 1,
         "IMAGE": "viking3.png",
         }
 
@@ -139,7 +139,7 @@ class SKILLS:
         "NONE": 0.0,
         "SPEARMAN": 100.0,
         "SLINGER": 50.0,
-        "ARCHER": 75.0,
+        "ARCHER": 50.0,
         "CATAPULT": 100.0,
         "CANNON": 125.0,
         "WIZARD": 100.0
@@ -155,12 +155,12 @@ class SKILLS:
         }
     INTERVAL = {
         "NONE": -1.0,
-        "SPEARMAN": 120.0,
+        "SPEARMAN": 60.0,
         "SLINGER": 140.0,
         "ARCHER": 100.0,
         "CATAPULT": 180.0,
         "CANNON": 240.0,
-        "WIZARD": 60.0
+        "WIZARD": 80.0
         }
     MAXDISTANCE = {
         "NONE": -1.0,
