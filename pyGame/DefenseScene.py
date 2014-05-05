@@ -193,20 +193,35 @@ class DefenseScene(Scene.Scene):
 
     def deployVikings(self):
         if self.count % (self.TARGET_FPS * self.INTERVAL1) == 0:
-            for i in range(2 + self.vikingWave):
-                self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, uniform(-20, 0), 5)
-                self.vikingId += 1
+            if self.vikingWave <= 8: 
+                for i in range(2 + self.vikingWave):
+                    self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, uniform(-20, 0), 5)
+                    self.vikingId += 1
+            else:
+                for i in range(8):
+                    self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_1, self.vikingId, uniform(-20, 0), 5)
+                    self.vikingId += 1
             self.vikingWave += 1
-        if self.vikingWave >= 2:
+        if self.vikingWave >= 8:
             if self.count % (self.TARGET_FPS * self.INTERVAL2) == 0:
-                for i in range(self.vikingWave - 2):
-                    self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, uniform(-10, 0), 5)
-                    self.vikingId += 1
-        if self.vikingWave >= 4:
+                if self.vikingWave <= 16:
+                    for i in range(self.vikingWave - 8):
+                        self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, uniform(-20, 0), 5)
+                        self.vikingId += 1
+                else:
+                    for i in range(8):
+                        self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_2, self.vikingId, uniform(-20, 0), 5)
+                        self.vikingId += 1                    
+        if self.vikingWave >= 16:
             if self.count % (self.TARGET_FPS * self.INTERVAL3) == 0:
-                for i in range(self.vikingWave - 4):
-                    self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, uniform(-10, 0), 5)
-                    self.vikingId += 1
+                if self.vikingWave <= 24:
+                    for i in range(self.vikingWave - 16):
+                        self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, uniform(-20, 0), 5)
+                        self.vikingId += 1
+                else:
+                    for i in range(8):
+                        self.vikings[self.vikingId] = Viking(self.world, VIKING.TYPE_3, self.vikingId, uniform(-20, 0), 5)
+                        self.vikingId += 1
             
     def manageBody(self, body):
         if body.userData != None and body.userData[0] == BULLET.HIT:

@@ -21,6 +21,31 @@ class VIKING:
     HIT = 24
     ATTACK = 25
 
+    TYPE_1 = {
+        "ATTACKINTERVAL": 60,
+        "DAMAGE": 10,
+        "HEALTH": 50,
+        "MONEY": 200,
+        "SPEED": 3,
+        "IMAGE": "viking1.png",
+        }
+    TYPE_2 = {
+        "ATTACKINTERVAL": 60,
+        "DAMAGE": 15,
+        "HEALTH": 150,
+        "MONEY": 400,
+        "SPEED": 3,
+        "IMAGE": "viking2.png",
+        }
+    TYPE_3 = {
+        "ATTACKINTERVAL": 60,
+        "DAMAGE": 20,
+        "HEALTH": 300,
+        "MONEY": 500,
+        "SPEED": 3,
+        "IMAGE": "viking3.png",
+        }
+
 class BULLET:
     #types
     STONE = 100
@@ -112,11 +137,11 @@ class CATEGORY:
 class SKILLS:
     DAMAGE = {
         "NONE": 0.0,
-        "SPEARMAN": 75.0,
-        "SLINGER": 30.0,
-        "ARCHER": 40.0,
-        "CATAPULT": 50.0,
-        "CANNON": 75.0,
+        "SPEARMAN": 100.0,
+        "SLINGER": 50.0,
+        "ARCHER": 75.0,
+        "CATAPULT": 100.0,
+        "CANNON": 125.0,
         "WIZARD": 100.0
         }
     SPEED = {

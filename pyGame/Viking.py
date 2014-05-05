@@ -39,28 +39,28 @@ class Viking():
 	def setInitParameters(self):
 
 		if self.name == VIKING.TYPE_1:
-			self.attackInterval = 60
-			self.damage = 10
-			self.health = 100
-			self.speed = 3
-			self.money = 100
-			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking1.png")
+			self.attackInterval = VIKING.TYPE_1["ATTACKINTERVAL"]
+			self.damage = VIKING.TYPE_1["DAMAGE"]
+			self.health = VIKING.TYPE_1["HEALTH"]
+			self.speed = VIKING.TYPE_1["SPEED"]
+			self.money = VIKING.TYPE_1["MONEY"]
+			self.image = pygame.image.load(PARAMS.IMAGEPATH + VIKING.TYPE_1["IMAGE"])
 
 		if self.name == VIKING.TYPE_2:
-			self.attackInterval = 60
-			self.damage = 15
-			self.health = 200
-			self.speed = 5
-			self.money = 200
-			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking2.png")
+			self.attackInterval = VIKING.TYPE_2["ATTACKINTERVAL"]
+			self.damage = VIKING.TYPE_2["DAMAGE"]
+			self.health = VIKING.TYPE_2["HEALTH"]
+			self.speed = VIKING.TYPE_2["SPEED"]
+			self.money = VIKING.TYPE_2["MONEY"]
+			self.image = pygame.image.load(PARAMS.IMAGEPATH + VIKING.TYPE_2["IMAGE"])
 
 		if self.name == VIKING.TYPE_3:
-			self.attackInterval = 60
-			self.damage = 20
-			self.health = 400
-			self.speed = 1
-			self.money = 400
-			self.image = pygame.image.load(PARAMS.IMAGEPATH + "viking3.png")
+			self.attackInterval = VIKING.TYPE_3["ATTACKINTERVAL"]
+			self.damage = VIKING.TYPE_3["DAMAGE"]
+			self.health = VIKING.TYPE_3["HEALTH"]
+			self.speed = VIKING.TYPE_3["SPEED"]
+			self.money = VIKING.TYPE_3["MONEY"]
+			self.image = pygame.image.load(PARAMS.IMAGEPATH + VIKING.TYPE_3["IMAGE"])
 
 		self.body.linearVelocity = vec2(self.speed, 0)
 		self.image = self.image.convert_alpha()

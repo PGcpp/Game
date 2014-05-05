@@ -84,7 +84,7 @@ class Defender():
                                 bulletBody.CreatePolygonFixture(box=(bullet.B2WIDTH, bullet.B2HEIGTH), density=bullet.DENSITY, friction=bullet.FRICTION) 
                                 bulletBody.mass = 1  #bardzo wazne! zmiana masy totalnie wszystko zmienia - czasem lotu pocisku manipulujemy za pomoca speed
                                 bulletBody.fixtures[0].sensor = True
-                                bulletBody.userData = [BULLET.NOT_HIT, bullet.image, BULLET.STONE]
+                                bulletBody.userData = [BULLET.NOT_HIT, bullet.image, bullet.damage]
 
                                 #pocisk stworzony teraz strzal
                                 #print "LEN: " + str( len( self.bullets ) )
