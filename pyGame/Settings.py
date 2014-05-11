@@ -1,5 +1,6 @@
 import ConfigParser
 
+#funkcje do obslugi pliku ustawien
 def getMusicLevel():
     settings = ConfigParser.ConfigParser()
     settings.readfp(open('settings.cfg'))

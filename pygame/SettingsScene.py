@@ -62,7 +62,6 @@ class SettingsScene(Scene.Scene):
         elif self.difficulty > 3:
             self.difficulty = 3
 
-        #drukowanie etykiet
         musicSettingsLabel = pygame.image.load("resources/musicSettingsLabel.png")
         effectsSettingsLabel = pygame.image.load("resources/effectsSettingsLabel.png")
         levelSettingsLabel = pygame.image.load("resources/levelSettingsLabel.png")

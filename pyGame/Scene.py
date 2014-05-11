@@ -33,7 +33,7 @@ class Scene():
         self.dispose()
 
     def prepare(self):
-        print "PREPARE"
+        pass
 
     def step(self):
         pass

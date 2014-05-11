@@ -103,9 +103,7 @@ class DefenseScene(Scene.Scene):
 
         self.initialDraw()
 
-    def step(self):
-        #print "FPS: " + str( self.clock.get_fps() )
-        
+    def step(self):      
         self.screen.blit( self.backgroundTexture, (0,0) )
 
         #rysowanie tekstury wiezy
@@ -163,9 +161,8 @@ class DefenseScene(Scene.Scene):
         
         for t in self.towerFloors[self.targetFloor:4]:
             if t.defender.interval > 0:
-                if self.count % t.defender.interval == 0: #przegladamy defenderow, jesli ktorys moze strzelac to strzelamy :)
+                if self.count % t.defender.interval == 0:
 
-                    #turbo naiwny algorytm
                     distanceToShoot = 0
                   
                     for v in self.vikings.keys():
@@ -174,12 +171,10 @@ class DefenseScene(Scene.Scene):
                         
                         if distanceToShoot < vikingX:
                             distanceToShoot = vikingX
-                            #print "VIKINGX: "+str( vikingX )
 
-                    if distanceToShoot > 0:  #czyli jesli w ogole ma strzelac
-                        distanceToShoot = 55.0 - distanceToShoot #bo chcemy tak naprawde "negatyw" - liczymy odleglosc na jaka strzelamy pociskiem a nie NA JAKIEJ ODLEGLOSCI ma wyladowac
-                    #print "DISTANCE TO SHOOT: " + str(distanceToShoot)
-                    t.defender.shoot( float(distanceToShoot) ) #ta wartosc ofc powinna byc wyliczona algorytmem wykrywania wikingow, na razie na pale
+                    if distanceToShoot > 0:  
+                        distanceToShoot = 55.0 - distanceToShoot 
+                    t.defender.shoot( float(distanceToShoot) )
 
                     distanceToShoot = 0
 
@@ -270,7 +265,7 @@ class DefenseScene(Scene.Scene):
                 self.showFloorMenuStore = False
                 self.refreshFloorMenuStore = True
 
-                self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
+                self.screen.blit( self.groundTextureRight, (768, 559) )
             
             print "Tower floor " + str(self.targetFloor) + " destroyed!"
             self.targetFloor += 1
@@ -319,8 +314,6 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(body.userData[1], (vertices[0][0], vertices[2][1]))
         if body.userData != None and body.userData[0] == BULLET.NOT_HIT:    
             self.screen.blit( pygame.transform.rotate(body.userData[1], (body.angle * 57.3) ), (vertices[0][0], vertices[2][1]))
-        #else
-        #    pygame.draw.polygon(self.screen, colors[body.type], vertices)
 
     def initialDraw(self):
 
@@ -343,11 +336,6 @@ class DefenseScene(Scene.Scene):
 
         amountLabel = moneyFont.render(str(self.money), 1, (255,255,0))
         self.screen.blit(amountLabel, (110, 600))
-
-        #if self.showFloorMenu:
-        #    self.refreshFloorMenu = True
-        #if self.showFloorMenuStore:
-        #    self.refreshFloorMenuStore = True
 
     def tryPay(self, amount):
         if self.money < amount:
@@ -532,7 +520,6 @@ class DefenseScene(Scene.Scene):
                                 if button.name == "SELLDEFENDER":
                                     defender = self.towerFloors[self.activeFloorMenu].defender
 
-                                    ##gracz odzyskuje cala kase ktora zaplacil za defendera ale traci wszystko co poulepszal - to chyba ma sens
                                     self.money += COSTS.DEFENDER[ defender.name ]
                                     self.showMoney()
                                     
@@ -603,7 +590,7 @@ class DefenseScene(Scene.Scene):
 
         if self.refreshFloorMenu:
             print "PIK"
-            self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
+            self.screen.blit( self.groundTextureRight, (768, 559) )
 
             self.refreshFloorMenu = False
 
@@ -667,12 +654,9 @@ class DefenseScene(Scene.Scene):
             self.screen.blit(self.towerFloors[self.activeFloorMenu].defender.icon, (1045, 640) )
 
             #wypisywanie zawartosci menu - przyciski/grafiki
-
             self.buttons[6] = Button(995, 628, "UPGRADEFLOORLEVEL")
-            #upgradeTowerFloorButton.displayImage(self.screen, False)
 
             self.buttons[7] = Button(950, 685, "FIXTOWERFLOOR")
-            #fixButton.displayImage(self.screen, False)
 
             self.buttons[8] = Button(1190, 647, "UPGRADEDEFENDERDAMAGE")
             self.buttons[9] = Button(1190, 667, "UPGRADEDEFENDERINTERVAL")
@@ -689,7 +673,7 @@ class DefenseScene(Scene.Scene):
 
         if self.refreshFloorMenuStore:
 
-            self.screen.blit( self.groundTextureRight, (768, 559) ) #to nam od razu czysci stare menu
+            self.screen.blit( self.groundTextureRight, (768, 559) )
             
             self.refreshFloorMenuStore = False
             
@@ -834,7 +818,6 @@ class DefenseScene(Scene.Scene):
 
         continueLoop = True 
 
-        #wieszamy gre :)
         while continueLoop:
 
             eventQueue = pygame.event.get()

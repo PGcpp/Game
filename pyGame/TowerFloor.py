@@ -10,10 +10,8 @@ class TowerFloor():
 
 	xPos = None
 	yPos = None
-
 	defender = None
 
-        #pozostale parametry:
 	floorNumber = None
         image = []
         level = None
@@ -28,6 +26,7 @@ class TowerFloor():
                 self.yPos = yPos
                 
                 self.image = images
+                #konwersja wszystkich images nalezacych do towerFloor
                 for i in range( len(self.image) ):
                         self.image[i] = pygame.image.load( self.image[i] ).convert_alpha()
 
@@ -38,7 +37,8 @@ class TowerFloor():
         def setDefender(self, defenderName):
 
                 x = 55.0
-                y = 36.0 - self.yPos - self.image[self.level].get_size()[1]/20.0 - 4.2 #4.2 dobrane na pale zeby pasowalo
+                #ustawienie defendera "na pietrze"
+                y = 36.0 - self.yPos - self.image[self.level].get_size()[1]/20.0 - 4.2
 
                 print "X: ",x,"   Y: ",y
 

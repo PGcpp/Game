@@ -12,11 +12,10 @@ class PARAMS:
     IMAGEPATH = "resources/"
 
 class VIKING:
-    #types
     TYPE_1 = 20
     TYPE_2 = 21
     TYPE_3 = 22
-    #states
+    #viking state
     NOT_HIT = 23
     HIT = 24
     ATTACK = 25
@@ -47,10 +46,9 @@ class VIKING:
         }
 
 class BULLET:
-    #types
     STONE = 100
     FIREBALL = 200
-    #states
+    #bullet state
     NOT_HIT = 30
     HIT = 31
 
@@ -173,7 +171,8 @@ class SKILLS:
         }
     
     STEP = 5
-    MINVALUE = 35 #maxymalnie dwa strzaly na sekunde
+    #interwal 35 frame'ow -> 2 strzaly na sekunde
+    MINVALUE = 35
 
     class FLOOR:
         MAXLEVEL = 1

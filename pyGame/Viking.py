@@ -38,6 +38,7 @@ class Viking():
 
 	def setInitParameters(self):
 
+                #tworzenie wikinga w zaleznosci od jego typu
 		if self.name == VIKING.TYPE_1:
 			self.attackInterval = VIKING.TYPE_1["ATTACKINTERVAL"]
 			self.damage = VIKING.TYPE_1["DAMAGE"]
@@ -62,6 +63,7 @@ class Viking():
 			self.money = VIKING.TYPE_3["MONEY"]
 			self.image = pygame.image.load(PARAMS.IMAGEPATH + VIKING.TYPE_3["IMAGE"])
 
+                #ruch wikinga
 		self.body.linearVelocity = vec2(self.speed, 0)
 		self.image = self.image.convert_alpha()
 
