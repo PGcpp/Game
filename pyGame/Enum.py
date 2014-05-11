@@ -24,7 +24,7 @@ class VIKING:
         "ATTACKINTERVAL": 60,
         "DAMAGE": 10,
         "HEALTH": 50,
-        "MONEY": 200,
+        "MONEY": 100,
         "SPEED": 3,
         "IMAGE": "viking1.png",
         }
@@ -32,7 +32,7 @@ class VIKING:
         "ATTACKINTERVAL": 60,
         "DAMAGE": 15,
         "HEALTH": 150,
-        "MONEY": 400,
+        "MONEY": 200,
         "SPEED": 5,
         "IMAGE": "viking2.png",
         }
@@ -40,7 +40,7 @@ class VIKING:
         "ATTACKINTERVAL": 60,
         "DAMAGE": 20,
         "HEALTH": 300,
-        "MONEY": 500,
+        "MONEY": 300,
         "SPEED": 1,
         "IMAGE": "viking3.png",
         }
